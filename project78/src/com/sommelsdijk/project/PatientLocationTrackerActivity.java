@@ -25,6 +25,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.location.Criteria;
 
@@ -38,6 +39,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private MyLocationOverlay myLocationOverlay;
 	List<Address> addresses = null;
 	private Address sameLocation = null;
+	private TextView locationTV;
 	
     /** Called when the activity is first created. */
     @Override
@@ -49,8 +51,9 @@ public class PatientLocationTrackerActivity extends MapActivity {
         dbConnectie db = new dbConnectie(this, "project78", "sommelsdijk");
         db.setInternal(false); //false voor buiten mijn huis 8(
         db.execute();
-        
+       
         Initialize();
+
        
 		myLocationOverlay.runOnFirstFix(new Runnable() {
 			public void run() {
@@ -73,7 +76,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
     
     private void Initialize() {
         
-        
+        locationTV = (TextView)findViewById(R.id.tvLocation);
         mapView = (MapView) findViewById(R.id.mapView);
 		mapView.setBuiltInZoomControls(true);
 		mapView.setSatellite(true);
@@ -171,16 +174,13 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	        List<Address> addresses = gc.getFromLocation(location.getLatitude(), location.getLongitude(), maxResults);
 	        System.out.println(addresses.toString());
 	        
-	        
-	        String Text = "De patient bevind zich op het adres " + addresses.get(0).getAddressLine(0);
-		    Toast.makeText( getApplicationContext(),
-		    Text,
-		    Toast.LENGTH_LONG).show();
-	        
+	        if(!addresses.get(0).getAddressLine(0).isEmpty() && sameLocation != addresses.get(0)){
+	        locationTV.setText("De patient bevind zich op het adres " + addresses.get(0).getAddressLine(0) );        
 	        itemizedoverlay.locatie = 
 	        		addresses.get(0).getAddressLine(0) + " \n" + location.getTime();
 	        	
-	        			
+	        sameLocation = addresses.get(0);
+	        }
 	        
 	        
 	        
