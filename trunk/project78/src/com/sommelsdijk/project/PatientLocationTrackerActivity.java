@@ -42,7 +42,8 @@ public class PatientLocationTrackerActivity extends MapActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        dbConnectie db = new dbConnectie("project78", "sommelsdijk");
+        //Database connectie
+        dbConnectie db = new dbConnectie(this, "project78", "sommelsdijk");
         db.setInternal(false); //false voor buiten mijn huis 8(
         db.execute();
         
@@ -151,7 +152,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			int lng = (int) (location.getLongitude() * 1E6);
 	        GeoPoint gp = new GeoPoint(lat, lng);
 	        createMarker(gp);
-	        mapController.animateTo(gp);
+			mapController.animateTo(gp);
 	        
 	        
 	        Geocoder gc = new Geocoder(context, Locale.getDefault());
