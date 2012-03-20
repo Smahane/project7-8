@@ -36,7 +36,8 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private LocationListener mlocListener;
 	private MyOverlays itemizedoverlay;
 	private MyLocationOverlay myLocationOverlay;
-	List<Address> addresses;
+	List<Address> addresses = null;
+	private Address sameLocation = null;
 	
     /** Called when the activity is first created. */
     @Override
@@ -49,29 +50,17 @@ public class PatientLocationTrackerActivity extends MapActivity {
         db.setInternal(false); //false voor buiten mijn huis 8(
         db.execute();
         
-        mapView = (MapView) findViewById(R.id.mapView);
-		mapView.setBuiltInZoomControls(true);
-		mapView.setSatellite(true);
-		mapController = mapView.getController();
-		//zoom van 1 tot 21, 1 is wereldmap.
-		mapController.setZoom(20);
-		
-		// Geven de overlay de context en onze mapview mee
-		myLocationOverlay = new MyLocationOverlay(this, mapView);
-		
-		mapView.getOverlays().add(myLocationOverlay);
-
+        Initialize();
+       
 		myLocationOverlay.runOnFirstFix(new Runnable() {
 			public void run() {
 				mapView.getController().animateTo(
 						myLocationOverlay.getMyLocation());
+			
 			}
 		});
-		
-		Drawable drawable = this.getResources().getDrawable(R.drawable.pltoma);
-		itemizedoverlay = new MyOverlays(this, drawable);
-		
-        
+				
+      
        mlocManager =
         		(LocationManager)getSystemService(Context.LOCATION_SERVICE);
         	mlocListener = new MyLocationListener();
@@ -82,7 +71,27 @@ public class PatientLocationTrackerActivity extends MapActivity {
     
     
     
-    @Override
+    private void Initialize() {
+        
+        
+        mapView = (MapView) findViewById(R.id.mapView);
+		mapView.setBuiltInZoomControls(true);
+		mapView.setSatellite(true);
+		mapController = mapView.getController();
+		//zoom van 1 tot 21, 1 is wereldmap.
+		mapController.setZoom(20);
+		// Geven de overlay de context en onze mapview mee
+		myLocationOverlay = new MyLocationOverlay(this, mapView);
+		
+		mapView.getOverlays().add(myLocationOverlay);
+		Drawable drawable = this.getResources().getDrawable(R.drawable.pltoma);
+		itemizedoverlay = new MyOverlays(this, drawable);
+	}
+
+
+
+
+	@Override
 	protected void onResume() {
 		super.onResume();
 		Criteria criteria = new Criteria();
@@ -109,26 +118,25 @@ public class PatientLocationTrackerActivity extends MapActivity {
     {
     public void onLocationChanged(Location loc)
 	    {
-	    	loc.getLatitude();
-	    	loc.getLongitude();
-		    String Text = "My current location is: " +
-		    "Latitud =" + loc.getLatitude() +
-		    "Longitud =" + loc.getLongitude();
-		    Toast.makeText( getApplicationContext(),
-		    Text,
-		    Toast.LENGTH_SHORT).show();
-		    try {
-				getAddressForLocation(getApplicationContext(), loc);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+    	
+	    try {
+			getAddressForLocation(getApplicationContext(), loc);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
+    			
+    			
+		    
+
 	   }
 
     public void onProviderDisabled(String provider)
 	    {
 		    Toast.makeText( getApplicationContext(),
 		    "Gps Disabled",
-		    Toast.LENGTH_SHORT ).show();
+		    Toast.LENGTH_LONG ).show();
 	    }
 
     public void onProviderEnabled(String provider)
@@ -156,11 +164,19 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	        createMarker(gp);
 			mapController.animateTo(gp);
 	        
+	        	        
+	        Geocoder gc = new Geocoder(getApplicationContext(), Locale.getDefault());
 	        
-	        Geocoder gc = new Geocoder(context, Locale.getDefault());
 	        
 	        List<Address> addresses = gc.getFromLocation(location.getLatitude(), location.getLongitude(), maxResults);
 	        System.out.println(addresses.toString());
+	        
+	        
+	        String Text = "De patient bevind zich op het adres " + addresses.get(0).getAddressLine(0);
+		    Toast.makeText( getApplicationContext(),
+		    Text,
+		    Toast.LENGTH_LONG).show();
+	        
 	        itemizedoverlay.locatie = 
 	        		addresses.get(0).getAddressLine(0) + " \n" + location.getTime();
 	        	
