@@ -42,6 +42,9 @@ public class PatientLocationTrackerActivity extends MapActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        dbConnectie db = new dbConnectie("project78", "sommelsdijk");
+        db.setInternal(false); //false voor buiten mijn huis 8(
+        db.execute();
         
         mapView = (MapView) findViewById(R.id.mapView);
 		mapView.setBuiltInZoomControls(true);
