@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    
+    
+                  <com.google.android.maps.MapView
+                 android:id="@+id/mapView"
+                 android:layout_width="fill_parent"
+                 android:layout_height="fill_parent"
+                 android:apiKey="0oBic7LCnLL8CDepLyfzYgiA_5aMNECZ5CafYCA"
+                 android:clickable="TRUE"
+                 />
+
+    <TextView
+        android:id="@+id/tvLocation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hello" />
+
+</LinearLayout>
