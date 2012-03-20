@@ -49,13 +49,9 @@ public class dbConnectie extends AsyncTask<Void, Void, Void> {
 			}
 
 			Connection conn = DriverManager.getConnection(url, login, password);
-			Toast.makeText(context, "dbConnectie success", Toast.LENGTH_LONG)
-					.show();
 
 			Log.i(tag, "Connected");
 		} catch (Exception e) {
-			Toast.makeText(context, "dbConnectie faalt", Toast.LENGTH_LONG)
-					.show();
 			e.printStackTrace();
 		}
 		return null;

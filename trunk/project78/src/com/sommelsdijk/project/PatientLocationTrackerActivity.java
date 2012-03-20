@@ -23,15 +23,17 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
 import android.location.Criteria;
 
 public class PatientLocationTrackerActivity extends MapActivity {
 	
-	MapView mapView;
-	MapController mapController;
-	LocationManager mlocManager;
-	LocationListener mlocListener;
+	private MapView mapView;
+	private MapController mapController;
+	private LocationManager mlocManager;
+	private LocationListener mlocListener;
 	private MyOverlays itemizedoverlay;
 	private MyLocationOverlay myLocationOverlay;
 	List<Address> addresses;
@@ -41,7 +43,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
+       
         //Database connectie
         dbConnectie db = new dbConnectie(this, "project78", "sommelsdijk");
         db.setInternal(false); //false voor buiten mijn huis 8(
