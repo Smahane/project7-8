@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -25,13 +26,15 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.location.Criteria;
 
 public class PatientLocationTrackerActivity extends MapActivity {
-	
+
 	private MapView mapView;
+	private final String tag = "MainActivity";
 	private MapController mapController;
 	private LocationManager mlocManager;
 	private LocationListener mlocListener;
@@ -40,184 +43,215 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	List<Address> addresses = null;
 	private Address sameLocation = null;
 	private TextView locationTV;
-	
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-       
-        //Database connectie
-        dbConnectie db = new dbConnectie(this, "project78", "sommelsdijk");
-        db.setInternal(false); //false voor buiten mijn huis 8(
-        db.execute();
-       
-        Initialize();
+	private String devNaam;
 
-       
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+
+		devNaam = android.os.Build.MODEL;
+		Log.d("devNaam", "" + devNaam);
+
+		//leesDb en dechDb werken
+		//TODO: schrijfDb fixen
+		
+		checkDb(devNaam, true);
+		//schrijfDb(true, devNaam, 50, 50);
+		
+		String result = leesDb(true, devNaam);
+		Log.i(tag, result);
+
+		Initialize();
+
 		myLocationOverlay.runOnFirstFix(new Runnable() {
 			public void run() {
 				mapView.getController().animateTo(
 						myLocationOverlay.getMyLocation());
-			
+
 			}
 		});
-				
-      
-       mlocManager =
-        		(LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        	mlocListener = new MyLocationListener();
-        		mlocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 5000, 0, mlocListener);
-    
-    }															//5secs update // 0 = locatieverandering triggert geen update
-    
-    
-    
-    
-    private void Initialize() {
-        
-        locationTV = (TextView)findViewById(R.id.tvLocation);
-        mapView = (MapView) findViewById(R.id.mapView);
+
+		mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		mlocListener = new MyLocationListener();
+		mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
+				0, mlocListener);
+
+	} // 5secs update // 0 = locatieverandering triggert geen update
+
+	/*
+	 * Lees database op apparaatnaam
+	 */
+	private String leesDb(boolean isInternal, String devNaam) {
+		dbLees lees = new dbLees(this, "project78", "sommelsdijk");
+		lees.setInternal(isInternal);
+		try {
+			String result = lees.execute(devNaam).get();
+			if(result != null) {
+				return result;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "Foutje";
+	}
+	
+	/*
+	 * Schrijf longtitude en latitude weg naar behorende apparaatnaam *Werkt nog niet*
+	 */
+	private void schrijfDb(boolean isInternal, String devNaam, float latitude,
+			float longtitude) {
+		dbSchrijf schrijf = new dbSchrijf(this, "project78", "sommelsdijk");
+		schrijf.setInternal(isInternal);
+		schrijf.execute(devNaam, "" + latitude, "" + longtitude);
+	}
+	/*
+	 * Check database of apparaatnaam al bestaat, zo ja; doe niks, zo nee; maak een nieuwe rij met apparaatnaam
+	 */
+	private void checkDb(String devNaam, boolean isInternal) {
+		dbLees lees = new dbLees(this, "project78", "sommelsdijk");
+		lees.setInternal(isInternal);
+		try {
+			String test = lees.execute(devNaam).get();
+			if (test != null) {
+				Log.i(tag, "Rij bestaat in db");
+			} else {
+				dbSchrijf schrijf = new dbSchrijf(this, "project78",
+						"sommelsdijk");
+				schrijf.setInternal(isInternal);
+				schrijf.execute(devNaam, "0", "0");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void Initialize() {
+
+		locationTV = (TextView) findViewById(R.id.tvLocation);
+		mapView = (MapView) findViewById(R.id.mapView);
 		mapView.setBuiltInZoomControls(true);
 		mapView.setSatellite(true);
 		mapController = mapView.getController();
-		//zoom van 1 tot 21, 1 is wereldmap.
+		// zoom van 1 tot 21, 1 is wereldmap.
 		mapController.setZoom(20);
 		// Geven de overlay de context en onze mapview mee
 		myLocationOverlay = new MyLocationOverlay(this, mapView);
-		
+
 		mapView.getOverlays().add(myLocationOverlay);
 		Drawable drawable = this.getResources().getDrawable(R.drawable.pltoma);
 		itemizedoverlay = new MyOverlays(this, drawable);
 	}
 
-
-
-
 	@Override
 	protected void onResume() {
 		super.onResume();
 		Criteria criteria = new Criteria();
-		mlocManager.requestLocationUpdates(5000, 100, criteria, mlocListener, null);
-    }
+		mlocManager.requestLocationUpdates(5000, 100, criteria, mlocListener,
+				null);
+	}
 
 	/* Remove the locationlistener updates when Activity is paused */
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mlocManager.removeUpdates(mlocListener)
-;	}
-	
+		mlocManager.removeUpdates(mlocListener);
+	}
+
 	private void createMarker(GeoPoint gp) {
 		OverlayItem overlayitem = new OverlayItem(gp, "", "");
 		itemizedoverlay.addOverlay(overlayitem);
-		
+
 		if (itemizedoverlay.size() > 0) {
 			mapView.getOverlays().add(itemizedoverlay);
 		}
 	}
-    
-    public class MyLocationListener implements LocationListener
-    {
-    public void onLocationChanged(Location loc)
-	    {
-    	
-	    try {
-			getAddressForLocation(getApplicationContext(), loc);
-		} catch (IOException e) {
-			e.printStackTrace();
+
+	public class MyLocationListener implements LocationListener {
+		public void onLocationChanged(Location loc) {
+
+			try {
+				getAddressForLocation(getApplicationContext(), loc);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 		}
 
+		public void onProviderDisabled(String provider) {
+			Toast.makeText(getApplicationContext(), "Gps Disabled",
+					Toast.LENGTH_LONG).show();
+		}
 
-    			
-    			
-		    
+		public void onProviderEnabled(String provider) {
+			Toast.makeText(getApplicationContext(), "Gps Enabled",
+					Toast.LENGTH_SHORT).show();
+		}
 
-	   }
+		public void onStatusChanged(String provider, int status, Bundle extras) {
 
-    public void onProviderDisabled(String provider)
-	    {
-		    Toast.makeText( getApplicationContext(),
-		    "Gps Disabled",
-		    Toast.LENGTH_LONG ).show();
-	    }
+		}
 
-    public void onProviderEnabled(String provider)
-	    {
-		    Toast.makeText( getApplicationContext(),
-		    "Gps Enabled",
-		    Toast.LENGTH_SHORT).show();
-	    }
+		public Address getAddressForLocation(Context context, Location location)
+				throws IOException {
 
-    public void onStatusChanged(String provider, int status, Bundle extras)
-	    {
-	
-	    }
-    public Address getAddressForLocation(Context context, Location location) throws IOException {
-
-	        if (location == null) 
-	        	{
-	            return null;
-	        	}
-	        int maxResults = 1;
-	        System.out.println(Locale.getDefault());
-	        int lat = (int) (location.getLatitude() * 1E6);
+			if (location == null) {
+				return null;
+			}
+			int maxResults = 1;
+			System.out.println(Locale.getDefault());
+			int lat = (int) (location.getLatitude() * 1E6);
 			int lng = (int) (location.getLongitude() * 1E6);
-	        GeoPoint gp = new GeoPoint(lat, lng);
-	        createMarker(gp);
+			GeoPoint gp = new GeoPoint(lat, lng);
+			createMarker(gp);
 			mapController.animateTo(gp);
-	        
-	        	        
-	        Geocoder gc = new Geocoder(getApplicationContext(), Locale.getDefault());
-	        
-	        
-	        List<Address> addresses = gc.getFromLocation(location.getLatitude(), location.getLongitude(), maxResults);
-	        System.out.println(addresses.toString());
-	        
-	        if(!addresses.get(0).getAddressLine(0).isEmpty() && sameLocation != addresses.get(0)){
-	        locationTV.setText("De patient bevind zich op het adres " + addresses.get(0).getAddressLine(0) );        
-	        itemizedoverlay.locatie = 
-	        		addresses.get(0).getAddressLine(0) + " \n" + location.getTime();
-	        	
-	        sameLocation = addresses.get(0);
-	        }
-	        
-	        
-	        
-	        if (addresses.size() == 1) {
-	            return addresses.get(0);
-	        } else {
-	            return null;
-	        }
-    }
 
-    }
+			Geocoder gc = new Geocoder(getApplicationContext(),
+					Locale.getDefault());
+
+			List<Address> addresses = gc
+					.getFromLocation(location.getLatitude(),
+							location.getLongitude(), maxResults);
+			System.out.println(addresses.toString());
+
+			if (!addresses.get(0).getAddressLine(0).isEmpty()
+					&& sameLocation != addresses.get(0)) {
+				locationTV.setText("De patient bevind zich op het adres "
+						+ addresses.get(0).getAddressLine(0));
+				itemizedoverlay.locatie = addresses.get(0).getAddressLine(0)
+						+ " \n" + location.getTime();
+
+				sameLocation = addresses.get(0);
+			}
+
+			if (addresses.size() == 1) {
+				return addresses.get(0);
+			} else {
+				return null;
+			}
+		}
+
+	}
 
 	@Override
 	protected boolean isRouteDisplayed() {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 }
 
-
-
 // B6:CD:2F:86:1E:EB:21:9B:6F:C6:1C:EE:AF:85:E2:3E
-/* C:\Users\Danny\.android
-
-$ keytool -list -alias androiddebugkey \
--keystore C:\Users\Danny\.android\debug.keystore
--storepass android -keypass android
-
-apikey 0oBic7LCnLL8CDepLyfzYgiA_5aMNECZ5CafYCA
-
-              <com.google.android.maps.MapView
-                 android:layout_width="fill_parent"
-                 android:layout_height="fill_parent"
-                 android:apiKey="0oBic7LCnLL_qXSw0UDOnWqz2mdnAfNO0a7J3QA"
-                 />
-            
-
-
-*/
+/*
+ * C:\Users\Danny\.android
+ * 
+ * $ keytool -list -alias androiddebugkey \ -keystore
+ * C:\Users\Danny\.android\debug.keystore -storepass android -keypass android
+ * 
+ * apikey 0oBic7LCnLL8CDepLyfzYgiA_5aMNECZ5CafYCA
+ * 
+ * <com.google.android.maps.MapView android:layout_width="fill_parent"
+ * android:layout_height="fill_parent"
+ * android:apiKey="0oBic7LCnLL_qXSw0UDOnWqz2mdnAfNO0a7J3QA" />
+ */

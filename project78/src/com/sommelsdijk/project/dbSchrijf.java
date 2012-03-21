@@ -7,19 +7,20 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-public class dbConnectie extends AsyncTask<Void, Void, Void> {
+public class dbSchrijf extends AsyncTask<String, Void, String> {
 
-	private final static String tag = "dbConnectie";
+	private final static String tag = "dbSchrijf";
 	private String login;
 	private String password;
 	private boolean isInternal;
 	private String url;
 	private Context context;
+	private Connection conn;
 
 	/*
 	 * Database connectie leggen met naam en wachtwoord
 	 */
-	public dbConnectie(Context context, String login, String password) {
+	public dbSchrijf(Context context, String login, String password) {
 		this.login = login;
 		this.password = password;
 		this.context = context;
@@ -38,7 +39,7 @@ public class dbConnectie extends AsyncTask<Void, Void, Void> {
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
 	@Override
-	protected Void doInBackground(Void... params) {
+	protected String doInBackground(String... params) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 
@@ -48,11 +49,27 @@ public class dbConnectie extends AsyncTask<Void, Void, Void> {
 				url = "jdbc:mysql://schriek.dscloud.me:3306/project78";
 			}
 
-			Connection conn = DriverManager.getConnection(url, login, password);
+			conn = DriverManager.getConnection(url, login, password);
+			Statement s = conn.createStatement();
+
+			int recordsUpdated;
+			recordsUpdated = s.executeUpdate("INSERT INTO gegevens VALUES ('" + params[0] + "','" + params[1] + "','" + params[2] + "')");
+			
+			Log.i(tag, recordsUpdated + " Records updated");
+
 
 			Log.i(tag, "Connected");
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
