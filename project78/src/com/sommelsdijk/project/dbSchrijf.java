@@ -34,7 +34,7 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 	}
 
 	/*
-	 * (non-Javadoc) De uiteindelijk connectie leggen
+	 * (non-Javadoc) Schrijven naar rij met devNaam of nieuwe rij aanmaken met devNaam
 	 * 
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
@@ -53,12 +53,23 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 			Statement s = conn.createStatement();
 
 			int recordsUpdated;
-			recordsUpdated = s.executeUpdate("INSERT INTO gegevens VALUES ('" + params[0] + "','" + params[1] + "','" + params[2] + "')");
-			
-			Log.i(tag, recordsUpdated + " Records updated");
+			if (params[0] == "create") {
+				recordsUpdated = s
+						.executeUpdate("INSERT INTO gegevens VALUES ('"
+								+ params[1] + "','0','0')");
 
+				Log.i(tag, recordsUpdated + " Rijen aangemaakt met id = "
+						+ params[1]);
+			} else {
+				recordsUpdated = s
+						.executeUpdate("UPDATE gegevens SET latitude = '"
+								+ params[1] + "', longtitude = '" + params[2]
+								+ "' WHERE id = '" + params[0] + "'");
 
-			Log.i(tag, "Connected");
+				Log.i(tag, recordsUpdated + " Records updated");
+			}
+
+			Log.i(tag, "Verbonden met db");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

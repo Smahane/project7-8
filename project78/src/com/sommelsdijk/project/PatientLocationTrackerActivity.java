@@ -58,10 +58,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		//TODO: schrijfDb fixen
 		
 		checkDb(devNaam, true);
-		//schrijfDb(true, devNaam, 50, 50);
+		schrijfDb(true, devNaam, 50, 50);
 		
 		String result = leesDb(true, devNaam);
-		Log.i(tag, result);
+		Log.i(tag, "Resultaat : " + result);
 
 		Initialize();
 
@@ -81,7 +81,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	} // 5secs update // 0 = locatieverandering triggert geen update
 
 	/*
-	 * Lees database op apparaatnaam
+	 * Lees database op devNaam
 	 */
 	private String leesDb(boolean isInternal, String devNaam) {
 		dbLees lees = new dbLees(this, "project78", "sommelsdijk");
@@ -98,7 +98,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	}
 	
 	/*
-	 * Schrijf longtitude en latitude weg naar behorende apparaatnaam *Werkt nog niet*
+	 * Schrijf longtitude en latitude weg naar behorende apparaatnaam 
 	 */
 	private void schrijfDb(boolean isInternal, String devNaam, float latitude,
 			float longtitude) {
@@ -120,7 +120,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				dbSchrijf schrijf = new dbSchrijf(this, "project78",
 						"sommelsdijk");
 				schrijf.setInternal(isInternal);
-				schrijf.execute(devNaam, "0", "0");
+				schrijf.execute("create", devNaam);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
