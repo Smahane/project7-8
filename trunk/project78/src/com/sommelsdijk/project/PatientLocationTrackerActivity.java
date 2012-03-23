@@ -17,6 +17,7 @@ import com.google.android.maps.ItemizedOverlay;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -54,12 +55,14 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		devNaam = android.os.Build.MODEL;
 		Log.d("devNaam", "" + devNaam);
 
-		//leesDb en dechDb werken
-		//TODO: schrijfDb fixen
+		// leesDb en dechDb werken
+		// TODO: schrijfDb fixen
+
+		this.startService(new Intent(this, trackerService.class));
 		
 		checkDb(devNaam, true);
 		schrijfDb(true, devNaam, 50, 50);
-		
+
 		String result = leesDb(true, devNaam);
 		Log.i(tag, "Resultaat : " + result);
 
@@ -88,7 +91,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		lees.setInternal(isInternal);
 		try {
 			String result = lees.execute(devNaam).get();
-			if(result != null) {
+			if (result != null) {
 				return result;
 			}
 		} catch (Exception e) {
@@ -96,18 +99,21 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		}
 		return "Foutje";
 	}
-	
+
 	/*
-	 * Schrijf longtitude en latitude weg naar behorende apparaatnaam 
+	 * Schrijf longtitude en latitude weg naar behorende apparaatnaam
 	 */
 	private void schrijfDb(boolean isInternal, String devNaam, float latitude,
 			float longtitude) {
+
 		dbSchrijf schrijf = new dbSchrijf(this, "project78", "sommelsdijk");
 		schrijf.setInternal(isInternal);
 		schrijf.execute(devNaam, "" + latitude, "" + longtitude);
 	}
+
 	/*
-	 * Check database of apparaatnaam al bestaat, zo ja; doe niks, zo nee; maak een nieuwe rij met apparaatnaam
+	 * Check database of apparaatnaam al bestaat, zo ja; doe niks, zo nee; maak
+	 * een nieuwe rij met apparaatnaam
 	 */
 	private void checkDb(String devNaam, boolean isInternal) {
 		dbLees lees = new dbLees(this, "project78", "sommelsdijk");
