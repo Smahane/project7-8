@@ -3,5 +3,8 @@
 
     <string name="hello">Hello World, Project78Activity!</string>
     <string name="app_name">Project78</string>
+    <string name="local_service_started">Service started</string>
+    <string name="local_service_stopped">Service stopped</string>
+    <string name="service_name">positionReceiver</string>
 
 </resources>
