@@ -28,6 +28,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.location.Criteria;
@@ -45,6 +47,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private Address sameLocation = null;
 	private TextView locationTV;
 	private String devNaam;
+	private MenuItem stop;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -58,7 +61,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		// leesDb en dechDb werken
 		// TODO: schrijfDb fixen
 
-		this.startService(new Intent(this, trackerService.class));
+		this.startService(new Intent(PatientLocationTrackerActivity.this, positionReceiver.class));
 		
 		checkDb(devNaam, true);
 		schrijfDb(true, devNaam, 50, 50);
@@ -82,6 +85,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				0, mlocListener);
 
 	} // 5secs update // 0 = locatieverandering triggert geen update
+
 
 	/*
 	 * Lees database op devNaam
