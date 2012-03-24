@@ -183,6 +183,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 			try {
 				getAddressForLocation(getApplicationContext(), loc);
+				mlocManager.removeUpdates(mlocListener);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

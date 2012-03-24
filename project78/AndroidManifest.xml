@@ -24,7 +24,6 @@
         </activity>
         <service android:enabled="true" android:name="positionReceiver"></service>
         <activity android:name="stopServiceJ"></activity>
-        <receiver android:name="receiver" android:permission="android.permission.ACCESS_FINE_LOCATION"></receiver>
     </application>
 
 </manifest>

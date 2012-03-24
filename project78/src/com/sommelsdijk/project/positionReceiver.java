@@ -14,6 +14,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,6 +23,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -46,11 +48,6 @@ public class positionReceiver extends Service {
 
 	private static final String tag = "GPSLoggerService";
 
-	// An alarm for rising in special times to fire the pendingIntentPositioning
-	private AlarmManager alarmManagerPositioning;
-	// A PendingIntent for calling a receiver in special times
-	public PendingIntent pendingIntentPositioning;
-
 	/** Called when the activity is first created. */
 	private void startLoggerService() {
 
@@ -59,20 +56,18 @@ public class positionReceiver extends Service {
 
 		locationListener = new MyLocationListener();
 
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTimeMillis,
-				minDistanceMeters, locationListener);
-
 		Toast.makeText(getBaseContext(),
 				"Service gemaakt met interval : \n" + minTimeMillis,
 				Toast.LENGTH_LONG).show();
 
-		CountDownTimer timer = new CountDownTimer(minTimeMillis, (60 * 1000)) {
+		CountDownTimer timer = new CountDownTimer(minTimeMillis, (60 * 2000)) {
 
 			@Override
 			public void onTick(long millisUntilFinished) {
 				// TODO Auto-generated method stub
 				Log.i("time left", " " + millisUntilFinished);
-
+				lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
+						minDistanceMeters, locationListener);
 			}
 
 			@Override
@@ -86,19 +81,6 @@ public class positionReceiver extends Service {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		
-		/*try {
-			long interval = 60 * 1000;
-			int alarmType = AlarmManager.ELAPSED_REALTIME_WAKEUP;
-			long timetoRefresh = SystemClock.elapsedRealtime();
-			alarmManagerPositioning.setInexactRepeating(alarmType,
-					timetoRefresh, interval, pendingIntentPositioning);
-		} catch (NumberFormatException e) {
-			Toast.makeText(this, "error running service: " + e.getMessage(),
-					Toast.LENGTH_SHORT).show();
-		} catch (Exception e) {
-			Toast.makeText(this, "error running service: " + e.getMessage(),
-					Toast.LENGTH_SHORT).show();
-		}*/
 	}
 
 	private void shutdownLoggerService() {
@@ -124,6 +106,8 @@ public class positionReceiver extends Service {
 											+ "m" : "?"), Toast.LENGTH_SHORT)
 							.show();
 			}
+			Log.i("U", "Updateje");
+			lm.removeUpdates(locationListener);
 		}
 
 		public void onProviderDisabled(String provider) {
@@ -168,13 +152,6 @@ public class positionReceiver extends Service {
 		super.onCreate();
 		Toast.makeText(this, "Created", Toast.LENGTH_LONG).show();
 		mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-		alarmManagerPositioning = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-		Intent intentToFire = new Intent(this, receiver.class);
-		intentToFire.setAction("com.sommelsdijk.project.receiver");
-		pendingIntentPositioning = PendingIntent.getBroadcast(this, 0,
-				intentToFire, 0);
 
 		startLoggerService();
 
