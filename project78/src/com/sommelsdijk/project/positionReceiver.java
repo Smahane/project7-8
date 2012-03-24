@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -21,6 +22,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
@@ -44,6 +46,11 @@ public class positionReceiver extends Service {
 
 	private static final String tag = "GPSLoggerService";
 
+	// An alarm for rising in special times to fire the pendingIntentPositioning
+	private AlarmManager alarmManagerPositioning;
+	// A PendingIntent for calling a receiver in special times
+	public PendingIntent pendingIntentPositioning;
+
 	/** Called when the activity is first created. */
 	private void startLoggerService() {
 
@@ -58,21 +65,40 @@ public class positionReceiver extends Service {
 		Toast.makeText(getBaseContext(),
 				"Service gemaakt met interval : \n" + minTimeMillis,
 				Toast.LENGTH_LONG).show();
-		
+
 		CountDownTimer timer = new CountDownTimer(minTimeMillis, (60 * 1000)) {
-			
+
 			@Override
 			public void onTick(long millisUntilFinished) {
 				// TODO Auto-generated method stub
 				Log.i("time left", " " + millisUntilFinished);
+
 			}
-			
+
 			@Override
 			public void onFinish() {
 				// TODO Auto-generated method stub
-				
+
 			}
 		}.start();
+	}
+
+	@Override
+	public void onStart(Intent intent, int startId) {
+		
+		/*try {
+			long interval = 60 * 1000;
+			int alarmType = AlarmManager.ELAPSED_REALTIME_WAKEUP;
+			long timetoRefresh = SystemClock.elapsedRealtime();
+			alarmManagerPositioning.setInexactRepeating(alarmType,
+					timetoRefresh, interval, pendingIntentPositioning);
+		} catch (NumberFormatException e) {
+			Toast.makeText(this, "error running service: " + e.getMessage(),
+					Toast.LENGTH_SHORT).show();
+		} catch (Exception e) {
+			Toast.makeText(this, "error running service: " + e.getMessage(),
+					Toast.LENGTH_SHORT).show();
+		}*/
 	}
 
 	private void shutdownLoggerService() {
@@ -142,6 +168,13 @@ public class positionReceiver extends Service {
 		super.onCreate();
 		Toast.makeText(this, "Created", Toast.LENGTH_LONG).show();
 		mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+		alarmManagerPositioning = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+		Intent intentToFire = new Intent(this, receiver.class);
+		intentToFire.setAction("com.sommelsdijk.project.receiver");
+		pendingIntentPositioning = PendingIntent.getBroadcast(this, 0,
+				intentToFire, 0);
 
 		startLoggerService();
 
