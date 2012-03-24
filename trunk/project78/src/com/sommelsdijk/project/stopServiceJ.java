@@ -11,7 +11,8 @@ public class stopServiceJ extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		stopService(new Intent(this, positionReceiver.class));
-
+		//receiver.stopLocationListener();
+		
 		finish();
 
 	}
