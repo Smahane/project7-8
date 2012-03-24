@@ -24,7 +24,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="trackerService" android:enabled="true"></service>
+        <service android:enabled="true" android:name="positionReceiver"></service>
+        <activity android:name="stopServiceJ"></activity>
     </application>
 
 </manifest>
