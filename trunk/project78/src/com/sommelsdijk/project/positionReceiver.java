@@ -60,20 +60,22 @@ public class positionReceiver extends Service {
 				"Service gemaakt met interval : \n" + minTimeMillis,
 				Toast.LENGTH_LONG).show();
 
-		CountDownTimer timer = new CountDownTimer(minTimeMillis, (60 * 2000)) {
-
+	}
+	
+	void startGpsUpdatesInterval(long interval) {
+		CountDownTimer timer = new CountDownTimer(interval, interval) {
+			
 			@Override
 			public void onTick(long millisUntilFinished) {
 				// TODO Auto-generated method stub
-				Log.i("time left", " " + millisUntilFinished);
-				lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
-						minDistanceMeters, locationListener);
+				
 			}
-
+			
 			@Override
 			public void onFinish() {
 				// TODO Auto-generated method stub
-
+				lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
+						minDistanceMeters, locationListener);
 			}
 		}.start();
 	}
@@ -108,6 +110,7 @@ public class positionReceiver extends Service {
 			}
 			Log.i("U", "Updateje");
 			lm.removeUpdates(locationListener);
+			startGpsUpdatesInterval((5 * 60 * 1000));
 		}
 
 		public void onProviderDisabled(String provider) {
