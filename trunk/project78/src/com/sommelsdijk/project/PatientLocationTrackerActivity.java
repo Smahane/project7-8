@@ -58,17 +58,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		devNaam = android.os.Build.MODEL;
 		Log.d("devNaam", "" + devNaam);
 
-		// leesDb en dechDb werken
-		// TODO: schrijfDb fixen
-
 		this.startService(new Intent(PatientLocationTrackerActivity.this, positionReceiver.class));
+		positionReceiver.setMinTimeMillis((10 * 60 * 1000));
+		positionReceiver.setExtern(false);
 		
-		checkDb(devNaam, true);
-		schrijfDb(true, devNaam, 50, 50);
-
-		String result = leesDb(true, devNaam);
-		Log.i(tag, "Resultaat : " + result);
-
 		Initialize();
 
 		myLocationOverlay.runOnFirstFix(new Runnable() {
@@ -180,10 +173,9 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 	public class MyLocationListener implements LocationListener {
 		public void onLocationChanged(Location loc) {
-
 			try {
 				getAddressForLocation(getApplicationContext(), loc);
-				mlocManager.removeUpdates(mlocListener);
+				//mlocManager.removeUpdates(mlocListener);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

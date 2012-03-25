@@ -55,8 +55,8 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 			int recordsUpdated;
 			if (params[0] == "create") {
 				recordsUpdated = s
-						.executeUpdate("INSERT INTO gegevens VALUES ('"
-								+ params[1] + "','0','0')");
+						.executeUpdate("INSERT INTO gegevens VALUES (NULL,'"
+								+ params[1] + "','" + params[2] + "','" + params[3] + "','" + params[4] +"')");
 
 				Log.i(tag, recordsUpdated + " Rijen aangemaakt met id = "
 						+ params[1]);

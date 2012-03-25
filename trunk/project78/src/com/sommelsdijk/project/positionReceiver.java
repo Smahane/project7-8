@@ -3,6 +3,7 @@ package com.sommelsdijk.project;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -39,7 +40,7 @@ public class positionReceiver extends Service {
 	private LocationManager lm;
 	private LocationListener locationListener;
 
-	private static long minTimeMillis = 15 * (60 * 1000);
+	private static long minTimeMillis = 0;
 	private static long minDistanceMeters = 0;
 	private static float minAccuracyMeters = 10;
 
@@ -47,6 +48,9 @@ public class positionReceiver extends Service {
 	private static boolean showingDebugToast = true;
 
 	private static final String tag = "GPSLoggerService";
+	private dbSchrijf schrijfdb;
+	private String devNaam;
+	private static boolean extern;
 
 	/** Called when the activity is first created. */
 	private void startLoggerService() {
@@ -55,25 +59,34 @@ public class positionReceiver extends Service {
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 		locationListener = new MyLocationListener();
+		schrijfdb = new dbSchrijf(getApplicationContext(), "project78",
+				"sommelsdijk");
+		schrijfdb.setInternal(true);
+
+		devNaam = android.os.Build.MODEL;
+
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
+				minDistanceMeters, locationListener);
 
 		Toast.makeText(getBaseContext(),
 				"Service gemaakt met interval : \n" + minTimeMillis,
 				Toast.LENGTH_LONG).show();
 
 	}
-	
+
 	void startGpsUpdatesInterval(long interval) {
+		Log.i(tag, "" + interval);
 		CountDownTimer timer = new CountDownTimer(interval, interval) {
 			
 			@Override
 			public void onTick(long millisUntilFinished) {
 				// TODO Auto-generated method stub
-				
 			}
-			
+
 			@Override
 			public void onFinish() {
 				// TODO Auto-generated method stub
+				Log.i(tag, "Locatie bepalen..");
 				lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
 						minDistanceMeters, locationListener);
 			}
@@ -82,7 +95,7 @@ public class positionReceiver extends Service {
 
 	@Override
 	public void onStart(Intent intent, int startId) {
-		
+
 	}
 
 	private void shutdownLoggerService() {
@@ -107,10 +120,17 @@ public class positionReceiver extends Service {
 									+ (loc.hasAccuracy() ? loc.getAccuracy()
 											+ "m" : "?"), Toast.LENGTH_SHORT)
 							.show();
+				try {
+					schrijfdb.execute("create", devNaam,
+							"" + loc.getLatitude(), "" + loc.getLongitude(), ""
+									+ System.currentTimeMillis());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			Log.i("U", "Updateje");
 			lm.removeUpdates(locationListener);
-			startGpsUpdatesInterval((5 * 60 * 1000));
+			startGpsUpdatesInterval(minTimeMillis);
 		}
 
 		public void onProviderDisabled(String provider) {
@@ -219,6 +239,10 @@ public class positionReceiver extends Service {
 
 	public static long getMinTimeMillis() {
 		return minTimeMillis;
+	}
+
+	public static void setExtern(boolean _extern) {
+		extern = _extern;
 	}
 
 	public static void setMinDistanceMeters(long _minDistanceMeters) {
