@@ -58,10 +58,15 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		devNaam = android.os.Build.MODEL;
 		Log.d("devNaam", "" + devNaam);
 
-		this.startService(new Intent(PatientLocationTrackerActivity.this, positionReceiver.class));
-		positionReceiver.setMinTimeMillis((10 * 60 * 1000));
-		positionReceiver.setExtern(false);
+		//this.startService(new Intent(PatientLocationTrackerActivity.this, positionReceiver.class));
+		//positionReceiver.setMinTimeMillis((10 * 60 * 1000));
+		//positionReceiver.setExtern(false);
 		
+		dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
+		schrijf.setInternal(false);
+		schrijf.execute("create", devNaam,
+				"" + "0.023939", "" + "0.040404", ""
+						+ System.currentTimeMillis());
 		Initialize();
 
 		myLocationOverlay.runOnFirstFix(new Runnable() {
@@ -103,7 +108,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private void schrijfDb(boolean isInternal, String devNaam, float latitude,
 			float longtitude) {
 
-		dbSchrijf schrijf = new dbSchrijf(this, "project78", "sommelsdijk");
+		dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
 		schrijf.setInternal(isInternal);
 		schrijf.execute(devNaam, "" + latitude, "" + longtitude);
 	}
@@ -120,7 +125,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			if (test != null) {
 				Log.i(tag, "Rij bestaat in db");
 			} else {
-				dbSchrijf schrijf = new dbSchrijf(this, "project78",
+				dbSchrijf schrijf = new dbSchrijf("project78",
 						"sommelsdijk");
 				schrijf.setInternal(isInternal);
 				schrijf.execute("create", devNaam);
@@ -244,6 +249,9 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	}
 
 }
+
+//0H6cbPmYFwiQTNV-yM5b8tX-Uz-yOtKSlMShg9Q
+//schriek
 
 // B6:CD:2F:86:1E:EB:21:9B:6F:C6:1C:EE:AF:85:E2:3E
 /*

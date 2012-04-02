@@ -20,10 +20,10 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 	/*
 	 * Database connectie leggen met naam en wachtwoord
 	 */
-	public dbSchrijf(Context context, String login, String password) {
+	public dbSchrijf(String login, String password) {
 		this.login = login;
 		this.password = password;
-		this.context = context;
+		//this.context = context;
 	}
 
 	/*

@@ -1,5 +1,7 @@
 package com.sommelsdijk.project;
 
+import java.io.BufferedOutputStream;
+
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -19,6 +21,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	private Context context;
 	private OverlayItem previousoverlay;
 	public String locatie = null;
+	private String devNaam;
 
 	public MyOverlays(Context context, Drawable defaultMarker) {
 		super(boundCenterBottom(defaultMarker));
@@ -65,6 +68,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	};
 	
 	public void Builder(){
+		devNaam = android.os.Build.MODEL;
 		Builder builder = new AlertDialog.Builder(context);
 		builder.setMessage("" + locatie);
 		builder.setCancelable(true);
@@ -79,6 +83,14 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 		public void onClick(DialogInterface dialog, int which) {
 			Toast.makeText(context, "You clicked yes", Toast.LENGTH_LONG)
 					.show();
+
+			dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
+			schrijf.setInternal(false);
+			
+			schrijf.execute("create", devNaam,
+					"" + "longtitude", "" + "latitude", ""
+							+ System.currentTimeMillis());
+			
 		}
 	}
 
