@@ -59,7 +59,7 @@ public class positionReceiver extends Service {
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 		locationListener = new MyLocationListener();
-		schrijfdb = new dbSchrijf(getApplicationContext(), "project78",
+		schrijfdb = new dbSchrijf("project78",
 				"sommelsdijk");
 		schrijfdb.setInternal(true);
 
