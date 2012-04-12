@@ -7,6 +7,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.widget.Toast;
 
 import com.google.android.maps.ItemizedOverlay;
@@ -20,7 +21,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	private boolean full = false;
 	private Context context;
 	private OverlayItem previousoverlay;
-	public String locatie = null;
+	public Location locatie = null;
 	private String devNaam;
 
 	public MyOverlays(Context context, Drawable defaultMarker) {
@@ -75,6 +76,8 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 		builder.setNegativeButton("Cancel", new CancelOnClickListener());
 		AlertDialog dialog = builder.create();
 		dialog.show();
+	
+		
 	}
 	
 

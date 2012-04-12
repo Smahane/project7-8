@@ -227,9 +227,8 @@ public class PatientLocationTrackerActivity extends MapActivity {
 					&& sameLocation != addresses.get(0)) {
 				locationTV.setText("De patient bevind zich op het adres "
 						+ addresses.get(0).getAddressLine(0));
-				itemizedoverlay.locatie = addresses.get(0).getAddressLine(0)
-						+ " \n" + location.getTime();
-
+				itemizedoverlay.locatie = location;
+					
 				sameLocation = addresses.get(0);
 			}
 
