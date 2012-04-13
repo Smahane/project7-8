@@ -16,6 +16,7 @@ public class dbLees extends AsyncTask<String, Void, String> {
 	private String url;
 	private Context context;
 	private Connection conn;
+	private String devNaam;
 
 	/*
 	 * Database connectie leggen met naam en wachtwoord
