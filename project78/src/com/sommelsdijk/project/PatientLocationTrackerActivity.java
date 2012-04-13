@@ -36,7 +36,7 @@ import android.location.Criteria;
 
 public class PatientLocationTrackerActivity extends MapActivity {
 
-	private MapView mapView;
+	static MapView mapView;
 	private final String tag = "MainActivity";
 	private MapController mapController;
 	private LocationManager mlocManager;
@@ -48,6 +48,9 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private TextView locationTV;
 	private String devNaam;
 	private MenuItem stop;
+	private KnownOverlays TrustedLocations; // instantie van en Overlay klasse, kunnen 5 verschillende overlays zijn, aanpasbaar
+	private GeoPoint gpForTrustedLocations[];
+	private int gpForTrustedLocationsCounter;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -62,11 +65,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		//positionReceiver.setMinTimeMillis((10 * 60 * 1000));
 		//positionReceiver.setExtern(false);
 		
-		dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
-		schrijf.setInternal(false);
-		schrijf.execute("create", devNaam,
-				"" + "0.023939", "" + "0.040404", ""
-						+ System.currentTimeMillis());
+	
 		Initialize();
 
 		myLocationOverlay.runOnFirstFix(new Runnable() {
@@ -150,6 +149,13 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		mapView.getOverlays().add(myLocationOverlay);
 		Drawable drawable = this.getResources().getDrawable(R.drawable.pltoma);
 		itemizedoverlay = new MyOverlays(this, drawable);
+		Drawable drawable2 = this.getResources().getDrawable(R.drawable.service_icon);
+		TrustedLocations = new KnownOverlays(this, drawable2);
+		
+		// Array van GEOPOINTS, kunnen de GPs in de database opslaan, door deze weer op te vragen kunnen we locaties op de map tekenen.
+		gpForTrustedLocations = new GeoPoint[10];
+		// Counter is nodig om de array op te schuiven.
+		gpForTrustedLocationsCounter = 0;
 	}
 
 	@Override
@@ -170,10 +176,21 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private void createMarker(GeoPoint gp) {
 		OverlayItem overlayitem = new OverlayItem(gp, "", "");
 		itemizedoverlay.addOverlay(overlayitem);
+		
 
 		if (itemizedoverlay.size() > 0) {
 			mapView.getOverlays().add(itemizedoverlay);
 		}
+	}
+	
+	private void createTrustedLocation(){
+		OverlayItem overlayitem = new OverlayItem(gpForTrustedLocations[gpForTrustedLocationsCounter], "", "");
+		TrustedLocations.addOverlay(overlayitem);
+		
+		if (TrustedLocations.size() > 0) {
+			mapView.getOverlays().add(TrustedLocations); 
+		}
+		gpForTrustedLocationsCounter++;
 	}
 
 	public class MyLocationListener implements LocationListener {
@@ -212,9 +229,25 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			int lat = (int) (location.getLatitude() * 1E6);
 			int lng = (int) (location.getLongitude() * 1E6);
 			GeoPoint gp = new GeoPoint(lat, lng);
+			
+			// Geven de Huidige GP mee in de array, later moet dit niet gezelfde GP zijn als bijv het huisadres.
+			/*if(gpForTrustedLocationsCounter<10){
+			gpForTrustedLocations[gpForTrustedLocationsCounter] = gp;
+			createTrustedLocation();
+			
+			}*/
+			
 			createMarker(gp);
 			mapController.animateTo(gp);
-
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			Geocoder gc = new Geocoder(getApplicationContext(),
 					Locale.getDefault());
 
@@ -227,7 +260,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 					&& sameLocation != addresses.get(0)) {
 				locationTV.setText("De patient bevind zich op het adres "
 						+ addresses.get(0).getAddressLine(0));
-				itemizedoverlay.locatie = location;
+				itemizedoverlay.huisAdres = addresses.get(0);
 					
 				sameLocation = addresses.get(0);
 			}
@@ -237,6 +270,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			} else {
 				return null;
 			}
+			
 		}
 
 	}
@@ -259,7 +293,8 @@ public class PatientLocationTrackerActivity extends MapActivity {
  * $ keytool -list -alias androiddebugkey \ -keystore
  * C:\Users\Danny\.android\debug.keystore -storepass android -keypass android
  * 
- * apikey 0oBic7LCnLL8CDepLyfzYgiA_5aMNECZ5CafYCA
+ * apikey 0oBic7LCnLL8CDepLyfzYgiA_5aMNECZ5CafYCA // DANNY
+ * apikey 0H6cbPmYFwiQTNV-yM5b8tX-Uz-yOtKSlMShg9Q // SCHRIEK
  * 
  * <com.google.android.maps.MapView android:layout_width="fill_parent"
  * android:layout_height="fill_parent"
