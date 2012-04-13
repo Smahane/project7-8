@@ -23,7 +23,7 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 	public dbSchrijf(String login, String password) {
 		this.login = login;
 		this.password = password;
-		//this.context = context;
+		// this.context = context;
 	}
 
 	/*
@@ -34,7 +34,8 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 	}
 
 	/*
-	 * (non-Javadoc) Schrijven naar rij met devNaam of nieuwe rij aanmaken met devNaam
+	 * (non-Javadoc) Schrijven naar rij met devNaam of nieuwe rij aanmaken met
+	 * devNaam
 	 * 
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
@@ -53,18 +54,30 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 			Statement s = conn.createStatement();
 
 			int recordsUpdated;
-			if (params[0] == "create") {
+
+			if (params[0] == "table") {
+				String[] tmp = params[1].split(" ");
 				recordsUpdated = s
-						.executeUpdate("INSERT INTO gegevens VALUES (NULL,'"
-								+ params[1] + "','" + params[2] + "','" + params[3] + "','" + params[4] +"')");
+						.executeUpdate("CREATE TABLE IF NOT EXISTS "
+								+ tmp[1]
+								+ " (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, longtitude FLOAT, latitude FLOAT, timestamp FLOAT);");
+			}
+
+			if (params[0] == "create") {
+				String[] tmp = params[1].split(" ");
+				recordsUpdated = s
+						.executeUpdate("INSERT INTO " + tmp[1] + " VALUES (NULL,'"
+								+ params[2] + "','" + params[3] + "','"
+								+ params[4] + "')");
 
 				Log.i(tag, recordsUpdated + " Rijen aangemaakt met id = "
 						+ params[1]);
-			} else {
+			}
+			if (params[0] == "update") {
 				recordsUpdated = s
 						.executeUpdate("UPDATE gegevens SET latitude = '"
-								+ params[1] + "', longtitude = '" + params[2]
-								+ "' WHERE id = '" + params[0] + "'");
+								+ params[2] + "', longtitude = '" + params[3]
+								+ "' WHERE id = '" + params[1] + "'");
 
 				Log.i(tag, recordsUpdated + " Records updated");
 			}
