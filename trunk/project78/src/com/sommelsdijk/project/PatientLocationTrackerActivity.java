@@ -49,9 +49,11 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private TextView locationTV;
 	private String devNaam;
 	private MenuItem stop;
-	private KnownOverlays TrustedLocations; // instantie van en Overlay klasse, kunnen 5 verschillende overlays zijn, aanpasbaar
-	private GeoPoint gpForTrustedLocations[];
-	private int gpForTrustedLocationsCounter;
+	private static KnownOverlays TrustedLocations; // instantie van en Overlay klasse,
+											// kunnen 5 verschillende overlays
+											// zijn, aanpasbaar
+	private static GeoPoint gpForTrustedLocations[];
+	private static int gpForTrustedLocationsCounter;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -61,6 +63,13 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 		devNaam = android.os.Build.MODEL;
 		Log.d("devNaam", "" + devNaam);
+		
+
+		// this.startService(new Intent(PatientLocationTrackerActivity.this,
+		// positionReceiver.class));
+		// positionReceiver.setMinTimeMillis((10 * 60 * 1000));
+		// positionReceiver.setExtern(false);
+
 
 		//this.startService(new Intent(PatientLocationTrackerActivity.this, positionReceiver.class));
 		//positionReceiver.setMinTimeMillis((10 * 60 * 1000));
@@ -68,8 +77,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		dbSchrijf db = new dbSchrijf("project78", "sommelsdijk");
 		db.setInternal(true);
 		db.execute("create", devNaam, "" + 0.0f, "" + 0.0f, "" + SystemClock.uptimeMillis());
-		
-	
+
 		Initialize();
 		
 		myLocationOverlay.runOnFirstFix(new Runnable() {
@@ -86,7 +94,6 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				0, mlocListener);
 
 	} // 5secs update // 0 = locatieverandering triggert geen update
-
 
 	/*
 	 * Lees database op devNaam
@@ -117,8 +124,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			if (test != null) {
 				Log.i(tag, "Rij bestaat in db");
 			} else {
-				dbSchrijf schrijf = new dbSchrijf("project78",
-						"sommelsdijk");
+				dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
 				schrijf.setInternal(isInternal);
 				schrijf.execute("create", devNaam);
 			}
@@ -142,10 +148,12 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		mapView.getOverlays().add(myLocationOverlay);
 		Drawable drawable = this.getResources().getDrawable(R.drawable.pltoma);
 		itemizedoverlay = new MyOverlays(this, drawable);
-		Drawable drawable2 = this.getResources().getDrawable(R.drawable.service_icon);
+		Drawable drawable2 = this.getResources().getDrawable(
+				R.drawable.service_icon);
 		TrustedLocations = new KnownOverlays(this, drawable2);
-		
-		// Array van GEOPOINTS, kunnen de GPs in de database opslaan, door deze weer op te vragen kunnen we locaties op de map tekenen.
+
+		// Array van GEOPOINTS, kunnen de GPs in de database opslaan, door deze
+		// weer op te vragen kunnen we locaties op de map tekenen.
 		gpForTrustedLocations = new GeoPoint[10];
 		// Counter is nodig om de array op te schuiven.
 		gpForTrustedLocationsCounter = 0;
@@ -169,19 +177,19 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private void createMarker(GeoPoint gp) {
 		OverlayItem overlayitem = new OverlayItem(gp, "", "");
 		itemizedoverlay.addOverlay(overlayitem);
-		
 
 		if (itemizedoverlay.size() > 0) {
 			mapView.getOverlays().add(itemizedoverlay);
 		}
 	}
-	
-	private void createTrustedLocation(){
-		OverlayItem overlayitem = new OverlayItem(gpForTrustedLocations[gpForTrustedLocationsCounter], "", "");
+
+	protected static void createTrustedLocation() {
+		OverlayItem overlayitem = new OverlayItem(
+				gpForTrustedLocations[gpForTrustedLocationsCounter], "", "");
 		TrustedLocations.addOverlay(overlayitem);
-		
+
 		if (TrustedLocations.size() > 0) {
-			mapView.getOverlays().add(TrustedLocations); 
+			mapView.getOverlays().add(TrustedLocations);
 		}
 		gpForTrustedLocationsCounter++;
 	}
@@ -190,7 +198,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		public void onLocationChanged(Location loc) {
 			try {
 				getAddressForLocation(getApplicationContext(), loc);
-				//mlocManager.removeUpdates(mlocListener);
+				// mlocManager.removeUpdates(mlocListener);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -222,25 +230,17 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			int lat = (int) (location.getLatitude() * 1E6);
 			int lng = (int) (location.getLongitude() * 1E6);
 			GeoPoint gp = new GeoPoint(lat, lng);
-			
-			// Geven de Huidige GP mee in de array, later moet dit niet gezelfde GP zijn als bijv het huisadres.
-			/*if(gpForTrustedLocationsCounter<10){
-			gpForTrustedLocations[gpForTrustedLocationsCounter] = gp;
-			createTrustedLocation();
-			
-			}*/
-			
+
+			// Geven de Huidige GP mee in de array, later moet dit niet gezelfde
+			// GP zijn als bijv het huisadres.
+			if (gpForTrustedLocationsCounter < 10) {
+				gpForTrustedLocations[gpForTrustedLocationsCounter] = gp;
+				
+			}
+
 			createMarker(gp);
 			mapController.animateTo(gp);
-			
-			
-			
-			
-			
-			
-			
-			
-			
+
 			Geocoder gc = new Geocoder(getApplicationContext(),
 					Locale.getDefault());
 
@@ -254,7 +254,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				locationTV.setText("De patient bevind zich op het adres "
 						+ addresses.get(0).getAddressLine(0));
 				itemizedoverlay.huisAdres = addresses.get(0);
-					
+
 				sameLocation = addresses.get(0);
 			}
 
@@ -263,7 +263,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			} else {
 				return null;
 			}
-			
+
 		}
 
 	}
@@ -276,8 +276,8 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 }
 
-//0H6cbPmYFwiQTNV-yM5b8tX-Uz-yOtKSlMShg9Q
-//schriek
+// 0H6cbPmYFwiQTNV-yM5b8tX-Uz-yOtKSlMShg9Q
+// schriek
 
 // B6:CD:2F:86:1E:EB:21:9B:6F:C6:1C:EE:AF:85:E2:3E
 /*
@@ -286,8 +286,8 @@ public class PatientLocationTrackerActivity extends MapActivity {
  * $ keytool -list -alias androiddebugkey \ -keystore
  * C:\Users\Danny\.android\debug.keystore -storepass android -keypass android
  * 
- * apikey 0oBic7LCnLL8CDepLyfzYgiA_5aMNECZ5CafYCA // DANNY
- * apikey 0H6cbPmYFwiQTNV-yM5b8tX-Uz-yOtKSlMShg9Q // SCHRIEK
+ * apikey 0oBic7LCnLL8CDepLyfzYgiA_5aMNECZ5CafYCA // DANNY apikey
+ * 0H6cbPmYFwiQTNV-yM5b8tX-Uz-yOtKSlMShg9Q // SCHRIEK
  * 
  * <com.google.android.maps.MapView android:layout_width="fill_parent"
  * android:layout_height="fill_parent"
