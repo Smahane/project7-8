@@ -27,6 +27,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -64,10 +65,13 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		//this.startService(new Intent(PatientLocationTrackerActivity.this, positionReceiver.class));
 		//positionReceiver.setMinTimeMillis((10 * 60 * 1000));
 		//positionReceiver.setExtern(false);
+		dbSchrijf db = new dbSchrijf("project78", "sommelsdijk");
+		db.setInternal(true);
+		db.execute("create", devNaam, "" + 0.0f, "" + 0.0f, "" + SystemClock.uptimeMillis());
 		
 	
 		Initialize();
-
+		
 		myLocationOverlay.runOnFirstFix(new Runnable() {
 			public void run() {
 				mapView.getController().animateTo(
@@ -99,17 +103,6 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			e.printStackTrace();
 		}
 		return "Foutje";
-	}
-
-	/*
-	 * Schrijf longtitude en latitude weg naar behorende apparaatnaam
-	 */
-	private void schrijfDb(boolean isInternal, String devNaam, float latitude,
-			float longtitude) {
-
-		dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
-		schrijf.setInternal(isInternal);
-		schrijf.execute(devNaam, "" + latitude, "" + longtitude);
 	}
 
 	/*

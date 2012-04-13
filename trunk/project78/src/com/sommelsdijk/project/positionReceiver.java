@@ -97,7 +97,7 @@ public class positionReceiver extends Service {
 	public void onStart(Intent intent, int startId) {
 
 	}
-
+	
 	private void shutdownLoggerService() {
 		lm.removeUpdates(locationListener);
 	}
@@ -132,7 +132,7 @@ public class positionReceiver extends Service {
 			lm.removeUpdates(locationListener);
 			startGpsUpdatesInterval(minTimeMillis);
 		}
-
+		
 		public void onProviderDisabled(String provider) {
 			if (showingDebugToast)
 				Toast.makeText(getBaseContext(),
