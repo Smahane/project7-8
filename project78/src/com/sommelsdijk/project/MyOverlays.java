@@ -75,6 +75,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 		builder.setCancelable(true);
 		builder.setPositiveButton("Ja", new JaOnClickListener());
 		builder.setNegativeButton("Cancel", new CancelOnClickListener());
+		builder.setNeutralButton("TrustedLocation", new TrustedLocationListener());
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	
@@ -93,38 +94,23 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	private final class JaOnClickListener implements
 	DialogInterface.OnClickListener {
 		
-		MyOverlays HomeOverlay;
 			public void onClick(DialogInterface dialog, int which) {
 	Toast.makeText(context, "Uw nieuwe huisadres wordt opgeslagen", Toast.LENGTH_LONG)
 			.show();
 
-	/*dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
-	schrijf.setInternal(false);
-	
-	schrijf.execute("create", devNaam,
-			"" + "longtitude", "" + "latitude", ""
-					+ System.currentTimeMillis());
-	*/
-	Drawable drawableHome = MyOverlays.context.getResources().getDrawable(R.drawable.home);
-	HomeOverlay = new MyOverlays(MyOverlays.context, drawableHome);
-	GeoPoint gp = new GeoPoint((int) huisAdres.getLatitude(), (int) huisAdres.getLongitude());
-	
-	createMarker(gp);
-	
-			}
-			private void createMarker(GeoPoint gp) {
-				OverlayItem overlayitem = new OverlayItem(gp, "", "");
-				HomeOverlay.addOverlay(overlayitem);
-				
 
-				if (HomeOverlay.size() > 0) {
-					PatientLocationTrackerActivity.mapView.getOverlays().add(HomeOverlay);
-				
-				}
-			}
+	}}
+	
+	private final class TrustedLocationListener implements
+	DialogInterface.OnClickListener {
+		public void onClick(DialogInterface dialog, int which) {
+			PatientLocationTrackerActivity.createTrustedLocation();
+		}
+	
 	
 }
-}
+	}
 
 
+	
 	

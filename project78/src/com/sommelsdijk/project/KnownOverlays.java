@@ -70,7 +70,7 @@ public class KnownOverlays extends ItemizedOverlay<OverlayItem> {
 	public void Builder(){
 		devNaam = android.os.Build.MODEL;
 		Builder builder = new AlertDialog.Builder(context);
-		builder.setMessage("Is " + " uw huisadres?");
+		builder.setMessage("Trusted Location ");
 		builder.setCancelable(true);
 		builder.setPositiveButton("Ja", new JaOnClickListener());
 		builder.setNegativeButton("Cancel", new CancelOnClickListener());
