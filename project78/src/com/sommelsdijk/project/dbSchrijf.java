@@ -62,9 +62,10 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 								+ tmp[1]
 								+ " (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, longtitude FLOAT, latitude FLOAT, timestamp FLOAT);");
 			}
-
+			
 			if (params[0] == "create") {
 				String[] tmp = params[1].split(" ");
+				System.out.println(tmp[1]);
 				recordsUpdated = s
 						.executeUpdate("INSERT INTO " + tmp[1] + " VALUES (NULL,'"
 								+ params[2] + "','" + params[3] + "','"
@@ -73,6 +74,19 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 				Log.i(tag, recordsUpdated + " Rijen aangemaakt met id = "
 						+ params[1]);
 			}
+			
+			if (params[0] == "home") {
+				String[] tmp = params[1].split(" ");
+				System.out.println(tmp[1]);
+				recordsUpdated = s
+						.executeUpdate("INSERT INTO " + tmp[1] + " VALUES (NULL,'" 
+								+ params[2] + "','" + params[3] + "','"
+								+ params[4] + "','" + params[5] + "')");
+
+				Log.i(tag, recordsUpdated + " Rijen aangemaakt met id = "
+						+ params[1]);
+			}
+			
 			if (params[0] == "update") {
 				recordsUpdated = s
 						.executeUpdate("UPDATE gegevens SET latitude = '"

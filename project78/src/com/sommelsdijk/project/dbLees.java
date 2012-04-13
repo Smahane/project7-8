@@ -54,11 +54,12 @@ public class dbLees extends AsyncTask<String, Void, String> {
 			Statement s = conn.createStatement();
 
 			ResultSet rs = null;
-			rs = s.executeQuery("SELECT * FROM gegevens");
+			String tmp[] = params[0].split(" ");
+			rs = s.executeQuery("SELECT * FROM " + tmp[1]);
 
 			while (rs.next()) {
 				String id = rs.getString(1);
-				if (id.trim().equalsIgnoreCase(params[0])) {
+				if (id == "1") {
 					String latitude = rs.getString(2);
 					String longtitude = rs.getString(3);
 

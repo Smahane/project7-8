@@ -49,9 +49,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private TextView locationTV;
 	private String devNaam;
 	private MenuItem stop;
-	private static KnownOverlays TrustedLocations; // instantie van en Overlay klasse,
-											// kunnen 5 verschillende overlays
-											// zijn, aanpasbaar
+	private static KnownOverlays TrustedLocations; // instantie van en Overlay
+													// klasse,
+	// kunnen 5 verschillende overlays
+	// zijn, aanpasbaar
 	private static GeoPoint gpForTrustedLocations[];
 	private static int gpForTrustedLocationsCounter;
 
@@ -63,33 +64,22 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 		devNaam = android.os.Build.MODEL;
 		Log.d("devNaam", "" + devNaam);
-		
 
 		// this.startService(new Intent(PatientLocationTrackerActivity.this,
 		// positionReceiver.class));
 		// positionReceiver.setMinTimeMillis((10 * 60 * 1000));
 		// positionReceiver.setExtern(false);
 
-
-		//this.startService(new Intent(PatientLocationTrackerActivity.this, positionReceiver.class));
-		//positionReceiver.setMinTimeMillis((10 * 60 * 1000));
-		//positionReceiver.setExtern(false);
+		// this.startService(new Intent(PatientLocationTrackerActivity.this,
+		// positionReceiver.class));
+		// positionReceiver.setMinTimeMillis((10 * 60 * 1000));
+		// positionReceiver.setExtern(false);
 		dbSchrijf db = new dbSchrijf("project78", "sommelsdijk");
-		db.setInternal(false);
-		try{
-		db.execute("table", devNaam);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		try{
-			
-			System.out.println(leesDb(false, devNaam));
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
+		db.setInternal(true);
+
+		db.execute("home", "home home", devNaam, "" + 0.0f, "" + 0.0f, "" + SystemClock.uptimeMillis());
 		Initialize();
-		
+
 		myLocationOverlay.runOnFirstFix(new Runnable() {
 			public void run() {
 				mapView.getController().animateTo(
@@ -245,7 +235,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			// GP zijn als bijv het huisadres.
 			if (gpForTrustedLocationsCounter < 10) {
 				gpForTrustedLocations[gpForTrustedLocationsCounter] = gp;
-				
+
 			}
 
 			createMarker(gp);
