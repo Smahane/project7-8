@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
+import android.os.SystemClock;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
@@ -95,8 +96,13 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	DialogInterface.OnClickListener {
 		
 			public void onClick(DialogInterface dialog, int which) {
+					
 	Toast.makeText(context, "Uw nieuwe huisadres wordt opgeslagen", Toast.LENGTH_LONG)
 			.show();
+	dbSchrijf db = new dbSchrijf("project78", "sommelsdijk");
+	db.execute("create", devNaam, "" + huisAdres.getLatitude(), "" + huisAdres.getLongitude(), "" + SystemClock.uptimeMillis());
+	
+	
 
 
 	}}
