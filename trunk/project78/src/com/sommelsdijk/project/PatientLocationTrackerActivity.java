@@ -70,14 +70,11 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		// positionReceiver.setMinTimeMillis((10 * 60 * 1000));
 		// positionReceiver.setExtern(false);
 
-		// this.startService(new Intent(PatientLocationTrackerActivity.this,
-		// positionReceiver.class));
-		// positionReceiver.setMinTimeMillis((10 * 60 * 1000));
-		// positionReceiver.setExtern(false);
-		dbSchrijf db = new dbSchrijf("project78", "sommelsdijk");
-		db.setInternal(true);
-
-		db.execute("home", "home home", devNaam, "" + 0.0f, "" + 0.0f, "" + SystemClock.uptimeMillis());
+		this.startService(new Intent(PatientLocationTrackerActivity.this,
+		positionReceiver.class));
+		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
+		positionReceiver.setExtern(false);
+		
 		Initialize();
 
 		myLocationOverlay.runOnFirstFix(new Runnable() {

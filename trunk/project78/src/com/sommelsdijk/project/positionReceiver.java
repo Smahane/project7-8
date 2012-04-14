@@ -121,13 +121,14 @@ public class positionReceiver extends Service {
 											+ "m" : "?"), Toast.LENGTH_SHORT)
 							.show();
 				try {
-					schrijfdb.execute("create", devNaam,
+					new dbSchrijf("project78", "sommelsdijk", true).execute("create", devNaam,
 							"" + loc.getLatitude(), "" + loc.getLongitude(), ""
 									+ System.currentTimeMillis());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
+		
 			Log.i("U", "Updateje");
 			lm.removeUpdates(locationListener);
 			startGpsUpdatesInterval(minTimeMillis);

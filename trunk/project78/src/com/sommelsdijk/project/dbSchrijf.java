@@ -25,6 +25,13 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 		this.password = password;
 		// this.context = context;
 	}
+	
+	public dbSchrijf(String login, String password, boolean extern) {
+		this.login = login;
+		this.password = password;
+		this.isInternal = extern;
+		// this.context = context;
+	}
 
 	/*
 	 * Intern of externe ip-address
@@ -76,12 +83,10 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 			}
 			
 			if (params[0] == "home") {
-				String[] tmp = params[1].split(" ");
-				System.out.println(tmp[1]);
 				recordsUpdated = s
-						.executeUpdate("INSERT INTO " + tmp[1] + " VALUES (NULL,'" 
-								+ params[2] + "','" + params[3] + "','"
-								+ params[4] + "','" + params[5] + "')");
+						.executeUpdate("INSERT INTO home VALUES (NULL,'" 
+								+ params[1] + "','" + params[2] + "','"
+								+ params[3] + "','" + params[4] + "')");
 
 				Log.i(tag, recordsUpdated + " Rijen aangemaakt met id = "
 						+ params[1]);
@@ -110,5 +115,11 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	protected void onPostExecute(String result) {
+		// TODO Auto-generated method stub
+		super.onPostExecute(result);
 	}
 }
