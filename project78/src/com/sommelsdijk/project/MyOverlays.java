@@ -72,7 +72,10 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	public void Builder(){
 		devNaam = android.os.Build.MODEL;
 		Builder builder = new AlertDialog.Builder(context);
-		builder.setMessage("Is " + currentAddress.getAddressLine(0) + " uw huisadres?");
+		if(currentAddress != null){
+		builder.setMessage("Is " + currentAddress.getAddressLine(0) + " uw huisadres?");}
+		else{
+		builder.setMessage("GEEN ADRES BESCHIKBAAR");}
 		builder.setCancelable(true);
 		builder.setPositiveButton("Ja", new JaOnClickListener());
 		builder.setNegativeButton("Cancel", new CancelOnClickListener());
@@ -100,7 +103,8 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	Toast.makeText(context, "Uw nieuwe huisadres wordt opgeslagen", Toast.LENGTH_LONG)
 			.show();
 
-	new dbSchrijf("project78", "sommelsdijk", true).execute("updateHome", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
+	new dbSchrijf("project78", "sommelsdijk", false).execute("updateHome", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), "" + SystemClock.uptimeMillis());
+
 
 
 	}}
@@ -119,8 +123,9 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 			//schrijf.execute("trustedlocation", devNaam,
 					//"" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), ""
 							//+ System.currentTimeMillis());
-			
-			new dbSchrijf("project78", "sommelsdijk", true).execute("trustedlocation", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
+
+			new dbSchrijf("project78", "sommelsdijk", false).execute("TrustedLocations", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
+
 			
 		}
 	

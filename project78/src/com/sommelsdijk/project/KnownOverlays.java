@@ -70,7 +70,7 @@ public class KnownOverlays extends ItemizedOverlay<OverlayItem> {
 	public void Builder(){
 		devNaam = android.os.Build.MODEL;
 		Builder builder = new AlertDialog.Builder(context);
-		builder.setMessage("Trusted Location ");
+		builder.setMessage("De vertrouwde locatie verwijderen?");
 		builder.setCancelable(true);
 		builder.setPositiveButton("Ja", new JaOnClickListener());
 		builder.setNegativeButton("Cancel", new CancelOnClickListener());
@@ -92,7 +92,7 @@ public class KnownOverlays extends ItemizedOverlay<OverlayItem> {
 	private final class JaOnClickListener implements
 	DialogInterface.OnClickListener {
 			public void onClick(DialogInterface dialog, int which) {
-	Toast.makeText(context, "Locatie verwijderen?", Toast.LENGTH_LONG)
+	Toast.makeText(context, "Locatie verwijderd", Toast.LENGTH_LONG)
 			.show();
 
 	dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");

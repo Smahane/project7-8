@@ -96,6 +96,9 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 				recordsUpdated = s.executeUpdate("UPDATE home SET latitude = '"
 								+ params[2] + "', longtitude = '" + params[3]
 								+ "' WHERE devNaam = '" + params[1] + "'");
+				
+				Log.i(tag, recordsUpdated + " RIJ GEUPDATE"
+						+ params[1]);
 			}
 			
 			if (params[0] == "update") {
@@ -107,12 +110,14 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 				Log.i(tag, recordsUpdated + " Records updated");
 			}
 			
-			if(params[0] == "trustedlocation"){
+			if(params[0] == "TrustedLocations"){
 				recordsUpdated = s
 						.executeUpdate("INSERT INTO TrustedLocations VALUES (NULL,'" 
 								+ params[1] + "','" + params[2] + "','"
 								+ params[3] + "')");
-				
+				Log.i(tag, recordsUpdated + "TRUSTED LOCATION TOEGEVOEGD VOOR DEVICE" 
+						+ params[1]);
+
 			}
 
 			Log.i(tag, "Verbonden met db");
