@@ -100,9 +100,10 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	Toast.makeText(context, "Uw nieuwe huisadres wordt opgeslagen", Toast.LENGTH_LONG)
 			.show();
 	dbSchrijf db = new dbSchrijf("project78", "sommelsdijk");
-	db.execute("create", devNaam, "" + huisAdres.getLatitude(), "" + huisAdres.getLongitude(), "" + SystemClock.uptimeMillis());
+	db.setInternal(false);
+	//db.execute("create", devNaam, "" + huisAdres.getLatitude(), "" + huisAdres.getLongitude(), "" + SystemClock.uptimeMillis());
 	
-	
+	db.execute("home", "home home", devNaam, "" + huisAdres.getLatitude(), "" + huisAdres.getLongitude(), "" + SystemClock.uptimeMillis());
 
 
 	}}
