@@ -26,6 +26,12 @@ public class dbLees extends AsyncTask<String, Void, String> {
 		this.password = password;
 		this.context = context;
 	}
+	
+	public dbLees(String login, String password, boolean extern) {
+		  this.login = login;
+		  this.password = password;
+		  this.isInternal = extern;
+		 }
 
 	/*
 	 * Intern of externe ip-address
@@ -50,6 +56,7 @@ public class dbLees extends AsyncTask<String, Void, String> {
 				url = "jdbc:mysql://schriek.dscloud.me:3306/project78";
 			}
 
+						
 			conn = DriverManager.getConnection(url, login, password);
 			Statement s = conn.createStatement();
 
@@ -59,9 +66,9 @@ public class dbLees extends AsyncTask<String, Void, String> {
 				rs = s.executeQuery("SELECT * FROM home WHERE devNaam = '"
 						+ params[1] + "'");
 				while (rs.next()) {
-					String devnom = rs.getString(1);
-					float latitude = rs.getFloat(2);
-					float longtitude = rs.getFloat(3);
+					String devnom = rs.getString(2);
+					float latitude = rs.getFloat(3);
+					float longtitude = rs.getFloat(4);
 					
 					return devnom + " " + latitude + " " + longtitude;
 				}

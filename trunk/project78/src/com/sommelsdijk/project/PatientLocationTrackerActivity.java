@@ -43,12 +43,16 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private LocationManager mlocManager;
 	private LocationListener mlocListener;
 	private MyOverlays itemizedoverlay;
+	private MyOverlays homeOverlay;
 	private MyLocationOverlay myLocationOverlay;
 	List<Address> addresses = null;
 	private Address sameLocation = null;
 	private TextView locationTV;
 	private String devNaam;
+	private float homeLatitude;
+	private float homeLongitude; 
 	private MenuItem stop;
+	private boolean homeIsSet;
 	private static KnownOverlays TrustedLocations; // instantie van en Overlay
 													// klasse,
 	// kunnen 5 verschillende overlays
@@ -73,12 +77,29 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		// positionReceiver.setExtern(false);
 
 		this.startService(new Intent(PatientLocationTrackerActivity.this,
-		positionReceiver.class));
+				positionReceiver.class));
 		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
-		positionReceiver.setExtern(true);
+		positionReceiver.setExtern(false);
 
+		leesDb(false, "leeshome");
+		try {
+			try {
+				String getHomeResultSet = new dbLees("project78",
+						"sommelsdijk", false).execute("leeshome", devNaam)
+						.get();
+				String[] tmp = getHomeResultSet.split(" ");
+				homeLatitude = Float.parseFloat(tmp[2]);
+				homeLongitude = Float.parseFloat(tmp[3]);
 
-		new dbSchrijf("project78", "sommelsdijk", true).execute("trustedlocation", devNaam, "" + 50.f, "" + 50f);
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		new dbSchrijf("project78", "sommelsdijk", true).execute(
+				"trustedlocation", devNaam, "" + 50.f, "" + 50f);
 
 		Initialize();
 
@@ -97,6 +118,24 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 	} // 5secs update // 0 = locatieverandering triggert geen update
 
+	private void createHomeOverlay() {
+		int lat = (int) (homeLatitude * 1E6);
+		int lng = (int) (homeLongitude * 1E6);
+		GeoPoint gp = new GeoPoint(lat, lng);
+		System.out.println(lat + " " + lng);
+
+		OverlayItem overlayitem = new OverlayItem(gp, "", "");
+		homeOverlay.addOverlay(overlayitem);
+		
+
+		if (homeOverlay.size() > 0) {
+			mapView.getOverlays().add(homeOverlay);
+			homeIsSet = true;
+		}else{
+			homeIsSet = false;
+		}
+	}
+
 	/*
 	 * Lees database op devNaam
 	 */
@@ -113,7 +152,6 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		}
 		return "Foutje";
 	}
-	
 
 	/*
 	 * Check database of apparaatnaam al bestaat, zo ja; doe niks, zo nee; maak
@@ -160,6 +198,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		gpForTrustedLocations = new GeoPoint[10];
 		// Counter is nodig om de array op te schuiven.
 		gpForTrustedLocationsCounter = 0;
+
+		Drawable homeDrawable = this.getResources()
+				.getDrawable(R.drawable.home);
+		homeOverlay = new MyOverlays(this, homeDrawable);
 	}
 
 	@Override
@@ -238,7 +280,9 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			// GP zijn als bijv het huisadres.
 			if (gpForTrustedLocationsCounter < 10) {
 				gpForTrustedLocations[gpForTrustedLocationsCounter] = gp;
-
+			}
+			if(!homeIsSet){
+				createHomeOverlay();
 			}
 
 			createMarker(gp);
