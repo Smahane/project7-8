@@ -99,11 +99,8 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 					
 	Toast.makeText(context, "Uw nieuwe huisadres wordt opgeslagen", Toast.LENGTH_LONG)
 			.show();
-	dbSchrijf db = new dbSchrijf("project78", "sommelsdijk");
-	db.setInternal(false);
-	//db.execute("create", devNaam, "" + huisAdres.getLatitude(), "" + huisAdres.getLongitude(), "" + SystemClock.uptimeMillis());
-	
-	db.execute("home",  devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), "" + SystemClock.uptimeMillis());
+
+	new dbSchrijf("project78", "sommelsdijk", false).execute("updateHome", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
 
 
 	}}
@@ -116,12 +113,14 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 			Toast.makeText(context, "Vertrouwde locatie wordt opgeslagen", Toast.LENGTH_LONG)
 			.show();
 
-			dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
-			schrijf.setInternal(false);
+			//dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
+			//schrijf.setInternal(false);
 			
-			schrijf.execute("create", devNaam,
-					"" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), ""
-							+ System.currentTimeMillis());
+			//schrijf.execute("trustedlocation", devNaam,
+					//"" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), ""
+							//+ System.currentTimeMillis());
+			
+			new dbSchrijf("project78", "sommelsdijk", false).execute("trustedlocation", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
 			
 		}
 	

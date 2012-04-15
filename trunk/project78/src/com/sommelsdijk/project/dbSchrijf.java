@@ -106,6 +106,14 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 
 				Log.i(tag, recordsUpdated + " Records updated");
 			}
+			
+			if(params[0] == "trustedlocation"){
+				recordsUpdated = s
+						.executeUpdate("INSERT INTO trustedlocation VALUES (NULL,'" 
+								+ params[1] + "','" + params[2] + "','"
+								+ params[3] + "','" + params[4] + "')");
+				
+			}
 
 			Log.i(tag, "Verbonden met db");
 		} catch (Exception e) {
