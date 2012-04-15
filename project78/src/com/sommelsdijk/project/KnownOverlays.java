@@ -92,7 +92,7 @@ public class KnownOverlays extends ItemizedOverlay<OverlayItem> {
 	private final class JaOnClickListener implements
 	DialogInterface.OnClickListener {
 			public void onClick(DialogInterface dialog, int which) {
-	Toast.makeText(context, "Uw nieuwe huisadres wordt opgeslagen", Toast.LENGTH_LONG)
+	Toast.makeText(context, "Locatie verwijderen?", Toast.LENGTH_LONG)
 			.show();
 
 	dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");

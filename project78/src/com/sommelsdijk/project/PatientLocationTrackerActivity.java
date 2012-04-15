@@ -77,8 +77,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
 		positionReceiver.setExtern(true);
 
-		new dbSchrijf("project78", "sommelsdijk", true).execute("updateHome", devNaam, "" + 50.f, "" + 50f);
-		
+		new dbSchrijf("project78", "sommelsdijk", false).execute("home", devNaam, "" + 50f, "" + 50f, "" + SystemClock.uptimeMillis());
 		Initialize();
 
 		myLocationOverlay.runOnFirstFix(new Runnable() {
@@ -101,7 +100,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	 */
 	private String leesDb(boolean isInternal, String devNaam) {
 		dbLees lees = new dbLees(this, "project78", "sommelsdijk");
-		lees.setInternal(isInternal);
+		lees.setInternal(false);
 		try {
 			String result = lees.execute(devNaam).get();
 			if (result != null) {
@@ -112,6 +111,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		}
 		return "Foutje";
 	}
+	
 
 	/*
 	 * Check database of apparaatnaam al bestaat, zo ja; doe niks, zo nee; maak
