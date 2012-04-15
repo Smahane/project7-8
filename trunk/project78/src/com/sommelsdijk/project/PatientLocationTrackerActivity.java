@@ -70,32 +70,12 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		// positionReceiver.setMinTimeMillis((10 * 60 * 1000));
 		// positionReceiver.setExtern(false);
 
-
-		// this.startService(new Intent(PatientLocationTrackerActivity.this,
-		// positionReceiver.class));
-		// positionReceiver.setMinTimeMillis((10 * 60 * 1000));
 		// positionReceiver.setExtern(false);
-
-		//this.startService(new Intent(PatientLocationTrackerActivity.this, positionReceiver.class));
-		//positionReceiver.setMinTimeMillis((10 * 60 * 1000));
-		//positionReceiver.setExtern(false);
-		dbSchrijf db = new dbSchrijf("project78", "sommelsdijk");
-		db.setInternal(false);
-		try{
-		db.execute("table", devNaam);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-
-		//db.execute("home", "home home", devNaam, "" + 0.0f, "" + 0.0f, "" + SystemClock.uptimeMillis());
 
 		this.startService(new Intent(PatientLocationTrackerActivity.this,
 		positionReceiver.class));
 		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
 		positionReceiver.setExtern(false);
-		
-
 
 		Initialize();
 
@@ -272,7 +252,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 					&& sameLocation != addresses.get(0)) {
 				locationTV.setText("De patient bevind zich op het adres "
 						+ addresses.get(0).getAddressLine(0));
-				itemizedoverlay.huisAdres = addresses.get(0);
+				itemizedoverlay.currentAddress = addresses.get(0);
 
 				sameLocation = addresses.get(0);
 			}

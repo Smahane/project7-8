@@ -22,7 +22,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	private boolean full = false;
 	private static Context context;
 	private OverlayItem previousoverlay;
-	protected Address huisAdres = null;
+	protected Address currentAddress = null;
 	private String devNaam;
 
 	public MyOverlays(Context context, Drawable defaultMarker) {
@@ -72,7 +72,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	public void Builder(){
 		devNaam = android.os.Build.MODEL;
 		Builder builder = new AlertDialog.Builder(context);
-		builder.setMessage("Is " + huisAdres.getAddressLine(0) + " uw huisadres?");
+		builder.setMessage("Is " + currentAddress.getAddressLine(0) + " uw huisadres?");
 		builder.setCancelable(true);
 		builder.setPositiveButton("Ja", new JaOnClickListener());
 		builder.setNegativeButton("Cancel", new CancelOnClickListener());
@@ -103,7 +103,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	db.setInternal(false);
 	//db.execute("create", devNaam, "" + huisAdres.getLatitude(), "" + huisAdres.getLongitude(), "" + SystemClock.uptimeMillis());
 	
-	db.execute("home", "home home", devNaam, "" + huisAdres.getLatitude(), "" + huisAdres.getLongitude(), "" + SystemClock.uptimeMillis());
+	db.execute("home",  devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), "" + SystemClock.uptimeMillis());
 
 
 	}}
@@ -112,6 +112,17 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	DialogInterface.OnClickListener {
 		public void onClick(DialogInterface dialog, int which) {
 			PatientLocationTrackerActivity.createTrustedLocation();
+			
+			Toast.makeText(context, "Vertrouwde locatie wordt opgeslagen", Toast.LENGTH_LONG)
+			.show();
+
+			dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
+			schrijf.setInternal(false);
+			
+			schrijf.execute("create", devNaam,
+					"" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), ""
+							+ System.currentTimeMillis());
+			
 		}
 	
 	
