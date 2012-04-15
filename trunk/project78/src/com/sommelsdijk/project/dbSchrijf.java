@@ -92,6 +92,12 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 						+ params[1]);
 			}
 			
+			if(params[0] == "updateHome") {
+				recordsUpdated = s.executeUpdate("UPDATE home SET latitude = '"
+								+ params[2] + "', longtitude = '" + params[3]
+								+ "' WHERE devNaam = '" + params[1] + "'");
+			}
+			
 			if (params[0] == "update") {
 				recordsUpdated = s
 						.executeUpdate("UPDATE gegevens SET latitude = '"
