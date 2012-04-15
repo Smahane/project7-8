@@ -109,9 +109,9 @@ public class dbSchrijf extends AsyncTask<String, Void, String> {
 			
 			if(params[0] == "trustedlocation"){
 				recordsUpdated = s
-						.executeUpdate("INSERT INTO trustedlocation VALUES (NULL,'" 
+						.executeUpdate("INSERT INTO TrustedLocations VALUES (NULL,'" 
 								+ params[1] + "','" + params[2] + "','"
-								+ params[3] + "','" + params[4] + "')");
+								+ params[3] + "')");
 				
 			}
 

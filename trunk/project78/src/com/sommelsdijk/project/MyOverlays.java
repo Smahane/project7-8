@@ -100,7 +100,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	Toast.makeText(context, "Uw nieuwe huisadres wordt opgeslagen", Toast.LENGTH_LONG)
 			.show();
 
-	new dbSchrijf("project78", "sommelsdijk", false).execute("updateHome", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
+	new dbSchrijf("project78", "sommelsdijk", true).execute("updateHome", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
 
 
 	}}
@@ -120,7 +120,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 					//"" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), ""
 							//+ System.currentTimeMillis());
 			
-			new dbSchrijf("project78", "sommelsdijk", false).execute("trustedlocation", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
+			new dbSchrijf("project78", "sommelsdijk", true).execute("trustedlocation", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
 			
 		}
 	

@@ -77,7 +77,9 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
 		positionReceiver.setExtern(true);
 
-		new dbSchrijf("project78", "sommelsdijk", false).execute("home", devNaam, "" + 50f, "" + 50f, "" + SystemClock.uptimeMillis());
+
+		new dbSchrijf("project78", "sommelsdijk", true).execute("trustedlocation", devNaam, "" + 50.f, "" + 50f);
+
 		Initialize();
 
 		myLocationOverlay.runOnFirstFix(new Runnable() {
