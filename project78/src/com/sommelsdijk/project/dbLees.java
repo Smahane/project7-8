@@ -53,23 +53,17 @@ public class dbLees extends AsyncTask<String, Void, String> {
 			conn = DriverManager.getConnection(url, login, password);
 			Statement s = conn.createStatement();
 
-			ResultSet rs = null;
-			String tmp[] = params[0].split(" ");
-			rs = s.executeQuery("SELECT * FROM " + tmp[1]);
+			if (params[0] == "leeshome") {
+				ResultSet rs = null;
 
-			while (rs.next()) {
-				String id = rs.getString(1);
-				if (id == "1") {
-					String latitude = rs.getString(2);
-					String longtitude = rs.getString(3);
-
-					/*
-					 * Log.i(tag, "id : " + id + " latitude : " + latitude +
-					 * " longtitude : " + longtitude);
-					 */
-
-					return "id : " + id + " latitude : " + latitude
-							+ " longtitude : " + longtitude;
+				rs = s.executeQuery("SELECT * FROM home WHERE devNaam = '"
+						+ params[1] + "'");
+				while (rs.next()) {
+					String devnom = rs.getString(1);
+					float latitude = rs.getFloat(2);
+					float longtitude = rs.getFloat(3);
+					
+					return devnom + " " + latitude + " " + longtitude;
 				}
 			}
 
