@@ -121,7 +121,7 @@ public class positionReceiver extends Service {
 											+ "m" : "?"), Toast.LENGTH_SHORT)
 							.show();
 				try {
-					new dbSchrijf("project78", "sommelsdijk", true).execute("create", devNaam,
+					new dbSchrijf("project78", "sommelsdijk", extern).execute("create", devNaam,
 							"" + loc.getLatitude(), "" + loc.getLongitude(), ""
 									+ System.currentTimeMillis());
 				} catch (Exception e) {
