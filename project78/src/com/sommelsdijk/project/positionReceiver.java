@@ -128,7 +128,7 @@ public class positionReceiver extends Service {
 					e.printStackTrace();
 				}
 			}
-		
+	
 			Log.i("U", "Updateje");
 			lm.removeUpdates(locationListener);
 			startGpsUpdatesInterval(minTimeMillis);
