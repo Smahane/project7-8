@@ -82,7 +82,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 		builder.setNeutralButton("TrustedLocation", new TrustedLocationListener());
 		AlertDialog dialog = builder.create();
 		dialog.show();
-	
+		
 		
 	}
 	
@@ -103,7 +103,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	Toast.makeText(context, "Uw nieuwe huisadres wordt opgeslagen", Toast.LENGTH_LONG)
 			.show();
 
-	new dbSchrijf("project78", "sommelsdijk", false).execute("updateHome", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), "" + SystemClock.uptimeMillis());
+	new dbSchrijf("project78", "sommelsdijk", false).execute("home", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), "" + SystemClock.uptimeMillis());
 
 
 
@@ -125,7 +125,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 							//+ System.currentTimeMillis());
 
 			new dbSchrijf("project78", "sommelsdijk", false).execute("TrustedLocations", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
-
+		
 			
 		}
 	
