@@ -17,6 +17,8 @@ public class dbLees extends AsyncTask<String, Void, String> {
 	private Context context;
 	private Connection conn;
 	private String devNaam;
+	private String trustedLocations;
+	private int i = 0;
 
 	/*
 	 * Database connectie leggen met naam en wachtwoord
@@ -62,15 +64,31 @@ public class dbLees extends AsyncTask<String, Void, String> {
 
 			if (params[0] == "leeshome") {
 				ResultSet rs = null;
+			
 
 				rs = s.executeQuery("SELECT * FROM home WHERE devNaam = '"
 						+ params[1] + "'");
+			
 				while (rs.next()) {
 					String devnom = rs.getString(2);
 					float latitude = rs.getFloat(3);
 					float longtitude = rs.getFloat(4);
 					
 					return devnom + " " + latitude + " " + longtitude;
+				}
+			}
+			
+			
+			if(params[0] == "leestrusted"){
+				ResultSet rs = null;
+				
+				rs = s.executeQuery("SELECT * FROM TrustedLocations WHERE devNaam = '"
+						+ params[1] + "'");
+				while(rs.next()) {	
+					trustedLocations += rs.getString(2) + " " + rs.getFloat(3) + " " + rs.getFloat(4) + " split";	
+					
+					return trustedLocations;
+					
 				}
 			}
 

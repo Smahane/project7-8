@@ -59,6 +59,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	// zijn, aanpasbaar
 	private static GeoPoint gpForTrustedLocations[];
 	private static int gpForTrustedLocationsCounter;
+	private TrustedLocations trustedLocs;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -69,39 +70,21 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		devNaam = android.os.Build.MODEL;
 		Log.d("devNaam", "" + devNaam);
 
-		// this.startService(new Intent(PatientLocationTrackerActivity.this,
-		// positionReceiver.class));
-		// positionReceiver.setMinTimeMillis((10 * 60 * 1000));
-		// positionReceiver.setExtern(false);
-
-		// positionReceiver.setExtern(false);
+		// Gets home location from the database;
+		getHomeLocation();
 
 		this.startService(new Intent(PatientLocationTrackerActivity.this,
 				positionReceiver.class));
 		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
 		positionReceiver.setExtern(false);
-
-		leesDb(false, "leeshome");
-		try {
-			try {
-				String getHomeResultSet = new dbLees("project78",
-						"sommelsdijk", false).execute("leeshome", devNaam)
-						.get();
-				String[] tmp = getHomeResultSet.split(" ");
-				homeLatitude = Float.parseFloat(tmp[2]);
-				homeLongitude = Float.parseFloat(tmp[3]);
-
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		new dbSchrijf("project78", "sommelsdijk", true).execute(
-				"trustedlocation", devNaam, "" + 50.f, "" + 50f);
+		
+		// Creates a fake location in the DB;
+	//	new dbSchrijf("project78", "sommelsdijk", true).execute(
+		//		"TrustedLocations", devNaam, "" + 50.f, "" + 50f);
 
 		Initialize();
+		
+		//trustedLocs.getHomeLocation();
 
 		myLocationOverlay.runOnFirstFix(new Runnable() {
 			public void run() {
@@ -117,16 +100,41 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				0, mlocListener);
 
 	} // 5secs update // 0 = locatieverandering triggert geen update
+	
+	
+	
+	private void getHomeLocation(){
+		try {
+			try {
+				String getHomeResultSet = new dbLees("project78",
+						"sommelsdijk", false).execute("leeshome", devNaam)
+						.get();
+				try{String[] tmp = getHomeResultSet.split(" ");
+							homeLatitude = Float.parseFloat(tmp[2]);
+							homeLongitude = Float.parseFloat(tmp[3]);
+				}catch(Exception e){
+					Log.i(getHomeResultSet, "ResultSet is NULL");
+				}
+
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		//HTC Vision	51.8476 	4.55281 	2.43481e+07
+		
+	}
 
 	private void createHomeOverlay() {
 		int lat = (int) (homeLatitude * 1E6);
 		int lng = (int) (homeLongitude * 1E6);
+		if(lat != 0 && lng != 0){
 		GeoPoint gp = new GeoPoint(lat, lng);
 		System.out.println(lat + " " + lng);
-
 		OverlayItem overlayitem = new OverlayItem(gp, "", "");
 		homeOverlay.addOverlay(overlayitem);
-		
+		}
 
 		if (homeOverlay.size() > 0) {
 			mapView.getOverlays().add(homeOverlay);
@@ -182,7 +190,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		mapView.setSatellite(true);
 		mapController = mapView.getController();
 		// zoom van 1 tot 21, 1 is wereldmap.
-		mapController.setZoom(20);
+		mapController.setZoom(18);
 		// Geven de overlay de context en onze mapview mee
 		myLocationOverlay = new MyLocationOverlay(this, mapView);
 
@@ -202,6 +210,8 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		Drawable homeDrawable = this.getResources()
 				.getDrawable(R.drawable.home);
 		homeOverlay = new MyOverlays(this, homeDrawable);
+		
+		trustedLocs = new TrustedLocations(devNaam);
 	}
 
 	@Override
@@ -282,11 +292,14 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				gpForTrustedLocations[gpForTrustedLocationsCounter] = gp;
 			}
 			if(!homeIsSet){
+				
+				getHomeLocation();
 				createHomeOverlay();
 			}
 
 			createMarker(gp);
 			mapController.animateTo(gp);
+			
 
 			Geocoder gc = new Geocoder(getApplicationContext(),
 					Locale.getDefault());
