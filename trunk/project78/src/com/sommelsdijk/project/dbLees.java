@@ -81,15 +81,13 @@ public class dbLees extends AsyncTask<String, Void, String> {
 			
 			if(params[0] == "leestrusted"){
 				ResultSet rs = null;
-				
+				trustedLocations = "";
 				rs = s.executeQuery("SELECT * FROM TrustedLocations WHERE devNaam = '"
 						+ params[1] + "'");
 				while(rs.next()) {	
-					trustedLocations += rs.getString(2) + " " + rs.getFloat(3) + " " + rs.getFloat(4) + " split";	
-					
-					return trustedLocations;
-					
-				}
+					trustedLocations += rs.getString("id") + " " + rs.getFloat("latitude") + " " + rs.getFloat("longtitude") + "/";			
+				} 	
+				return trustedLocations;
 			}
 
 			Log.i(tag, "Connected");
