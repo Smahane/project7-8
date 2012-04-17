@@ -53,13 +53,14 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private float homeLongitude; 
 	private MenuItem stop;
 	private boolean homeIsSet;
+	private float trustedLatitude[];
+	private float trustedLongitude[];
 	private static KnownOverlays TrustedLocations; // instantie van en Overlay
 													// klasse,
 	// kunnen 5 verschillende overlays
 	// zijn, aanpasbaar
 	private static GeoPoint gpForTrustedLocations[];
 	private static int gpForTrustedLocationsCounter;
-	private TrustedLocations trustedLocs;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -83,8 +84,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		//		"TrustedLocations", devNaam, "" + 50.f, "" + 50f);
 
 		Initialize();
-		
-		//trustedLocs.getHomeLocation();
+		getTrustedLocation();
 
 		myLocationOverlay.runOnFirstFix(new Runnable() {
 			public void run() {
@@ -142,6 +142,50 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		}else{
 			homeIsSet = false;
 		}
+	}
+	
+	protected void getTrustedLocation() {
+		try {
+			try {
+				String getTrustedResultSet = new dbLees("project78",
+						"sommelsdijk", false).execute("leestrusted", devNaam)
+						.get();
+				String[] tmp = getTrustedResultSet.split("/");
+				
+				trustedLatitude = new float[tmp.length];
+				trustedLongitude = new float[tmp.length];
+				String tmpLatLong[] = new String[tmp.length];
+				String[] tmpLatitude;
+				String[] tmpLongitude;
+				
+				for(int i =0;i<tmp.length;i++){
+				tmpLatLong[i] = tmp[i].substring(2);
+				
+				if(i%2==0){
+					tmpLatitude = tmpLatLong[i].split(" ");
+				}
+				if(i%2==1){
+					tmpLongitude = tmpLatLong[i].split(" ");
+				}
+
+				}
+			
+				
+				String temp = tmp[0].toString();
+				
+				System.out.println(trustedLatitude[0]);
+				System.out.println("TRUSTED LOCATION FROM DB " + tmp[0] );
+				System.out.println(temp.split(" "));
+				System.out.println("TRUSTED LOCATION FROM DB " + tmp[1] );
+				System.out.println("TRUSTED LOCATION FROM DB " + tmp[2] );
+
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+		}
+
 	}
 
 	/*
@@ -210,8 +254,6 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		Drawable homeDrawable = this.getResources()
 				.getDrawable(R.drawable.home);
 		homeOverlay = new MyOverlays(this, homeDrawable);
-		
-		trustedLocs = new TrustedLocations(devNaam);
 	}
 
 	@Override
