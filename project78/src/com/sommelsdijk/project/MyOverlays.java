@@ -1,5 +1,6 @@
 package com.sommelsdijk.project;
 
+import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -36,7 +37,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	protected OverlayItem createItem(int i) {
 		return overlays[i];
 	}
-	
+
 	@Override
 	public int size() {
 		if (full) {
@@ -46,7 +47,6 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 		}
 
 	}
-
 
 	public void addOverlay(OverlayItem overlay) {
 		if (previousoverlay != null) {
@@ -65,76 +65,94 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 
 	protected boolean onTap(int index) {
 		OverlayItem overlayItem = overlays[index];
-		
+
 		Builder();
-		
+
 		return true;
 	};
-	
-	public void Builder(){
+
+	public void Builder() {
 		devNaam = android.os.Build.MODEL;
 		Builder builder = new AlertDialog.Builder(context);
-		if(currentAddress != null){
-		builder.setMessage("Is " + currentAddress.getAddressLine(0) + " uw huisadres?");}
-		else{
-		builder.setMessage("GEEN ADRES BESCHIKBAAR");}
+		if (currentAddress != null) {
+			builder.setMessage("Is " + currentAddress.getAddressLine(0)
+					+ " uw huisadres?");
+		} else {
+			builder.setMessage("GEEN ADRES BESCHIKBAAR");
+		}
 		builder.setCancelable(true);
 		builder.setPositiveButton("Ja", new JaOnClickListener());
 		builder.setNegativeButton("Cancel", new CancelOnClickListener());
-		builder.setNeutralButton("TrustedLocation", new TrustedLocationListener());
+		builder.setNeutralButton("TrustedLocation",
+				new TrustedLocationListener());
 		AlertDialog dialog = builder.create();
 		dialog.show();
-		
-		
+
 	}
-	
 
 	private final class CancelOnClickListener implements
 			DialogInterface.OnClickListener {
 		public void onClick(DialogInterface dialog, int which) {
-			Toast.makeText(context, "cancelled", Toast.LENGTH_LONG)
-					.show();			
+			Toast.makeText(context, "cancelled", Toast.LENGTH_LONG).show();
 		}
 	}
-	
+
 	private final class JaOnClickListener implements
-	DialogInterface.OnClickListener {
-		
-			public void onClick(DialogInterface dialog, int which) {
-					
-	Toast.makeText(context, "Uw nieuwe huisadres wordt opgeslagen", Toast.LENGTH_LONG)
-			.show();
+			DialogInterface.OnClickListener {
 
-	new dbSchrijf("project78", "sommelsdijk", internal).execute("home", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), "" + SystemClock.uptimeMillis());
+		public void onClick(DialogInterface dialog, int which) {
 
+			Toast.makeText(context, "Uw nieuwe huisadres wordt opgeslagen",
+					Toast.LENGTH_LONG).show();
 
+			try {
+				String res = new dbLees("project78", "sommelsdijk", internal)
+						.execute("leeshome", devNaam).get();
+				if (res == null) {
+					new dbSchrijf("project78", "sommelsdijk", internal)
+							.execute("home", devNaam,
+									"" + currentAddress.getLatitude(), ""
+											+ currentAddress.getLongitude(), ""
+											+ SystemClock.uptimeMillis());
+				} else {
+					new dbSchrijf("project78", "sommelsdijk", internal)
+							.execute("updateHome", devNaam,
+									"" + currentAddress.getLatitude(), ""
+											+ currentAddress.getLongitude());
+				}
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-	}}
-	
+		}
+	}
+
 	private final class TrustedLocationListener implements
-	DialogInterface.OnClickListener {
+			DialogInterface.OnClickListener {
 		public void onClick(DialogInterface dialog, int which) {
 			PatientLocationTrackerActivity.createTrustedLocation();
-			
-			Toast.makeText(context, "Vertrouwde locatie wordt opgeslagen", Toast.LENGTH_LONG)
-			.show();
 
-			//dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
-			//schrijf.setInternal(false);
-			
-			//schrijf.execute("trustedlocation", devNaam,
-					//"" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), ""
-							//+ System.currentTimeMillis());
+			Toast.makeText(context, "Vertrouwde locatie wordt opgeslagen",
+					Toast.LENGTH_LONG).show();
 
-			new dbSchrijf("project78", "sommelsdijk", internal).execute("TrustedLocations", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
-		
-			
+			// dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
+			// schrijf.setInternal(false);
+
+			// schrijf.execute("trustedlocation", devNaam,
+			// "" + currentAddress.getLatitude(), "" +
+			// currentAddress.getLongitude(), ""
+			// + System.currentTimeMillis());
+
+			new dbSchrijf("project78", "sommelsdijk", internal).execute(
+					"TrustedLocations", devNaam,
+					"" + currentAddress.getLatitude(),
+					"" + currentAddress.getLongitude());
+
 		}
-	
-	
-}
+
 	}
-
-
-	
-	
+}

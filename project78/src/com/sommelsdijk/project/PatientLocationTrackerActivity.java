@@ -119,6 +119,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 					homeLatitude = Float.parseFloat(tmp[2]);
 					homeLongitude = Float.parseFloat(tmp[3]);
 				} catch (Exception e) {
+					Toast.makeText(this, "Thuis adres niet gevonden!", Toast.LENGTH_LONG).show();
 					Log.i(getHomeResultSet, "ResultSet is NULL");
 				}
 
@@ -129,7 +130,6 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			e.printStackTrace();
 		}
 		// HTC Vision 51.8476 4.55281 2.43481e+07
-
 	}
 
 	private void createHomeOverlay() {
