@@ -50,11 +50,12 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private TextView locationTV;
 	private String devNaam;
 	private float homeLatitude;
-	private float homeLongitude; 
+	private float homeLongitude;
 	private MenuItem stop;
 	private boolean homeIsSet;
 	private float trustedLatitude[];
 	private float trustedLongitude[];
+	private boolean internal;
 	private static KnownOverlays TrustedLocations; // instantie van en Overlay
 													// klasse,
 	// kunnen 5 verschillende overlays
@@ -72,18 +73,25 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		Log.d("devNaam", "" + devNaam);
 
 		// Gets home location from the database;
+		
+		internal = true;
+		
 		getHomeLocation();
-
+		
+		
 		this.startService(new Intent(PatientLocationTrackerActivity.this,
 				positionReceiver.class));
 		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
-		positionReceiver.setExtern(false);
-		
+		positionReceiver.setExtern(internal);
+
 		// Creates a fake location in the DB;
-	//	new dbSchrijf("project78", "sommelsdijk", true).execute(
-		//		"TrustedLocations", devNaam, "" + 50.f, "" + 50f);
+		// new dbSchrijf("project78", "sommelsdijk", true).execute(
+		// "TrustedLocations", devNaam, "" + 50.f, "" + 50f);
+
+		// leesDb(false, "leeshome");
 
 		Initialize();
+		createHomeOverlay();
 		getTrustedLocation();
 
 		myLocationOverlay.runOnFirstFix(new Runnable() {
@@ -100,19 +108,17 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				0, mlocListener);
 
 	} // 5secs update // 0 = locatieverandering triggert geen update
-	
-	
-	
-	private void getHomeLocation(){
+
+	private void getHomeLocation() {
 		try {
 			try {
 				String getHomeResultSet = new dbLees("project78",
-						"sommelsdijk", false).execute("leeshome", devNaam)
-						.get();
-				try{String[] tmp = getHomeResultSet.split(" ");
-							homeLatitude = Float.parseFloat(tmp[2]);
-							homeLongitude = Float.parseFloat(tmp[3]);
-				}catch(Exception e){
+						"sommelsdijk", internal).execute("leeshome", devNaam).get();
+				try {
+					String[] tmp = getHomeResultSet.split(" ");
+					homeLatitude = Float.parseFloat(tmp[2]);
+					homeLongitude = Float.parseFloat(tmp[3]);
+				} catch (Exception e) {
 					Log.i(getHomeResultSet, "ResultSet is NULL");
 				}
 
@@ -122,104 +128,55 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		//HTC Vision	51.8476 	4.55281 	2.43481e+07
-		
+		// HTC Vision 51.8476 4.55281 2.43481e+07
+
 	}
 
 	private void createHomeOverlay() {
 		int lat = (int) (homeLatitude * 1E6);
 		int lng = (int) (homeLongitude * 1E6);
-		if(lat != 0 && lng != 0){
-		GeoPoint gp = new GeoPoint(lat, lng);
-		System.out.println(lat + " " + lng);
-		OverlayItem overlayitem = new OverlayItem(gp, "", "");
-		homeOverlay.addOverlay(overlayitem);
+		if (lat != 0 && lng != 0) {
+			GeoPoint gp = new GeoPoint(lat, lng);
+			System.out.println(lat + " " + lng);
+			OverlayItem overlayitem = new OverlayItem(gp, "", "");
+			homeOverlay.addOverlay(overlayitem);
 		}
 
 		if (homeOverlay.size() > 0) {
 			mapView.getOverlays().add(homeOverlay);
 			homeIsSet = true;
-		}else{
+		} else {
 			homeIsSet = false;
 		}
 	}
-	
+
 	protected void getTrustedLocation() {
 		try {
 			try {
 				String getTrustedResultSet = new dbLees("project78",
-						"sommelsdijk", false).execute("leestrusted", devNaam)
+						"sommelsdijk", internal).execute("leestrusted", devNaam)
 						.get();
 				String[] tmp = getTrustedResultSet.split("/");
-				
-				trustedLatitude = new float[tmp.length];
-				trustedLongitude = new float[tmp.length];
-				String tmpLatLong[] = new String[tmp.length];
-				String[] tmpLatitude;
-				String[] tmpLongitude;
-				
-				for(String temp : tmp) {
-					String[] split = temp.split(" ");
+
+				for (String s : tmp) {
+					String[] split = s.split(" ");
 					
 					String id = split[0];
 					float latitude = Float.parseFloat(split[1]);
 					float longtitude = Float.parseFloat(split[2]);
+					
+					System.out.println(latitude + " " + longtitude);
+					
+					mapView.getOverlays().add(new CircleOverlay(this, latitude, longtitude, 300f));
 				}
-			
-				
-				String temp = tmp[0].toString();
-				
-				System.out.println(trustedLatitude[0]);
-				System.out.println("TRUSTED LOCATION FROM DB " + tmp[0] );
-				System.out.println(temp.split(" "));
-				System.out.println("TRUSTED LOCATION FROM DB " + tmp[1] );
-				System.out.println("TRUSTED LOCATION FROM DB " + tmp[2] );
 
 			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-		}
-
-	}
-
-	/*
-	 * Lees database op devNaam
-	 */
-	private String leesDb(boolean isInternal, String devNaam) {
-		dbLees lees = new dbLees(this, "project78", "sommelsdijk");
-		lees.setInternal(false);
-		try {
-			String result = lees.execute(devNaam).get();
-			if (result != null) {
-				return result;
-			}
-		} catch (Exception e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return "Foutje";
-	}
 
-	/*
-	 * Check database of apparaatnaam al bestaat, zo ja; doe niks, zo nee; maak
-	 * een nieuwe rij met apparaatnaam
-	 */
-	private void checkDb(String devNaam, boolean isInternal) {
-		dbLees lees = new dbLees(this, "project78", "sommelsdijk");
-		lees.setInternal(isInternal);
-		try {
-			String test = lees.execute(devNaam).get();
-			if (test != null) {
-				Log.i(tag, "Rij bestaat in db");
-			} else {
-				dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
-				schrijf.setInternal(isInternal);
-				schrijf.execute("create", devNaam);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void Initialize() {
@@ -236,10 +193,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 		mapView.getOverlays().add(myLocationOverlay);
 		Drawable drawable = this.getResources().getDrawable(R.drawable.pltoma);
-		itemizedoverlay = new MyOverlays(this, drawable);
+		itemizedoverlay = new MyOverlays(this, drawable, internal);
 		Drawable drawable2 = this.getResources().getDrawable(
 				R.drawable.service_icon);
-		TrustedLocations = new KnownOverlays(this, drawable2);
+		TrustedLocations = new KnownOverlays(this, drawable2, internal);
 
 		// Array van GEOPOINTS, kunnen de GPs in de database opslaan, door deze
 		// weer op te vragen kunnen we locaties op de map tekenen.
@@ -249,7 +206,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 		Drawable homeDrawable = this.getResources()
 				.getDrawable(R.drawable.home);
-		homeOverlay = new MyOverlays(this, homeDrawable);
+		homeOverlay = new MyOverlays(this, homeDrawable, internal);
 	}
 
 	@Override
@@ -329,15 +286,14 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			if (gpForTrustedLocationsCounter < 10) {
 				gpForTrustedLocations[gpForTrustedLocationsCounter] = gp;
 			}
-			if(!homeIsSet){
-				
+			if (!homeIsSet) {
+
 				getHomeLocation();
 				createHomeOverlay();
 			}
 
 			createMarker(gp);
 			mapController.animateTo(gp);
-			
 
 			Geocoder gc = new Geocoder(getApplicationContext(),
 					Locale.getDefault());

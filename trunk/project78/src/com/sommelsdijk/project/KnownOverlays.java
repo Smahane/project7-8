@@ -23,17 +23,19 @@ public class KnownOverlays extends ItemizedOverlay<OverlayItem> {
 	private Context context;
 	private OverlayItem previousoverlay;
 	private String devNaam;
+	private boolean internal;
 
-	public KnownOverlays(Context context, Drawable defaultMarker) {
+	public KnownOverlays(Context context, Drawable defaultMarker, boolean internal) {
 		super(boundCenterBottom(defaultMarker));
 		this.context = context;
+		this.internal = internal;
 	}
 
 	@Override
 	protected OverlayItem createItem(int i) {
 		return overlays[i];
 	}
-	
+
 	@Override
 	public int size() {
 		if (full) {
@@ -43,7 +45,6 @@ public class KnownOverlays extends ItemizedOverlay<OverlayItem> {
 		}
 
 	}
-
 
 	public void addOverlay(OverlayItem overlay) {
 		if (previousoverlay != null) {
@@ -62,12 +63,12 @@ public class KnownOverlays extends ItemizedOverlay<OverlayItem> {
 
 	protected boolean onTap(int index) {
 		OverlayItem overlayItem = overlays[index];
-		
+
 		Builder();
 		return true;
 	};
-	
-	public void Builder(){
+
+	public void Builder() {
 		devNaam = android.os.Build.MODEL;
 		Builder builder = new AlertDialog.Builder(context);
 		builder.setMessage("De vertrouwde locatie verwijderen?");
@@ -76,35 +77,29 @@ public class KnownOverlays extends ItemizedOverlay<OverlayItem> {
 		builder.setNegativeButton("Cancel", new CancelOnClickListener());
 		AlertDialog dialog = builder.create();
 		dialog.show();
-	
-		
+
 	}
-	
 
 	private final class CancelOnClickListener implements
 			DialogInterface.OnClickListener {
 		public void onClick(DialogInterface dialog, int which) {
-			Toast.makeText(context, "cancelled", Toast.LENGTH_LONG)
-					.show();			
+			Toast.makeText(context, "cancelled", Toast.LENGTH_LONG).show();
 		}
 	}
-	
+
 	private final class JaOnClickListener implements
-	DialogInterface.OnClickListener {
-			public void onClick(DialogInterface dialog, int which) {
-	Toast.makeText(context, "Locatie verwijderd", Toast.LENGTH_LONG)
-			.show();
+			DialogInterface.OnClickListener {
+		public void onClick(DialogInterface dialog, int which) {
+			Toast.makeText(context, "Locatie verwijderd", Toast.LENGTH_LONG)
+					.show();
 
-	dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
-	schrijf.setInternal(false);
-	
-	schrijf.execute("create", devNaam,
-			"" + "longtitude", "" + "latitude", ""
-					+ System.currentTimeMillis());
-	
-}
-}
+			dbSchrijf schrijf = new dbSchrijf("project78", "sommelsdijk");
+			schrijf.setInternal(internal);
 
+			schrijf.execute("create", devNaam, "" + "longtitude", ""
+					+ "latitude", "" + System.currentTimeMillis());
 
-	
+		}
+	}
+
 }

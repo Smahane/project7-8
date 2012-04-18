@@ -24,10 +24,12 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	private OverlayItem previousoverlay;
 	protected Address currentAddress = null;
 	private String devNaam;
+	private boolean internal;
 
-	public MyOverlays(Context context, Drawable defaultMarker) {
+	public MyOverlays(Context context, Drawable defaultMarker, boolean internal) {
 		super(boundCenterBottom(defaultMarker));
 		this.context = context;
+		this.internal = internal;
 	}
 
 	@Override
@@ -103,7 +105,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 	Toast.makeText(context, "Uw nieuwe huisadres wordt opgeslagen", Toast.LENGTH_LONG)
 			.show();
 
-	new dbSchrijf("project78", "sommelsdijk", false).execute("home", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), "" + SystemClock.uptimeMillis());
+	new dbSchrijf("project78", "sommelsdijk", internal).execute("home", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), "" + SystemClock.uptimeMillis());
 
 
 
@@ -124,7 +126,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 					//"" + currentAddress.getLatitude(), "" + currentAddress.getLongitude(), ""
 							//+ System.currentTimeMillis());
 
-			new dbSchrijf("project78", "sommelsdijk", false).execute("TrustedLocations", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
+			new dbSchrijf("project78", "sommelsdijk", internal).execute("TrustedLocations", devNaam, "" + currentAddress.getLatitude(), "" + currentAddress.getLongitude());
 		
 			
 		}
