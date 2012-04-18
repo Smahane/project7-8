@@ -28,13 +28,13 @@ public class dbLees extends AsyncTask<String, Void, String> {
 		this.password = password;
 		this.context = context;
 	}
-	
-	public dbLees(String login, String password, boolean extern) {
-		  this.login = login;
-		  this.password = password;
-		  this.isInternal = extern;
-		 }
 
+	public dbLees(String login, String password, boolean extern) {
+		this.login = login;
+		this.password = password;
+		this.isInternal = extern;
+		// this.context = context;
+	}
 	/*
 	 * Intern of externe ip-address
 	 */
