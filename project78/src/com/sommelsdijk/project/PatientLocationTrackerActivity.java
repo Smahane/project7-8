@@ -158,16 +158,12 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				String[] tmpLatitude;
 				String[] tmpLongitude;
 				
-				for(int i =0;i<tmp.length;i++){
-				tmpLatLong[i] = tmp[i].substring(2);
-				
-				if(i%2==0){
-					tmpLatitude = tmpLatLong[i].split(" ");
-				}
-				if(i%2==1){
-					tmpLongitude = tmpLatLong[i].split(" ");
-				}
-
+				for(String temp : tmp) {
+					String[] split = temp.split(" ");
+					
+					String id = split[0];
+					float latitude = Float.parseFloat(split[1]);
+					float longtitude = Float.parseFloat(split[2]);
 				}
 			
 				
