@@ -20,7 +20,11 @@ public class TrustedLocations {
 				String getTrustedResultSet = new dbLees("project78",
 						"sommelsdijk", false).execute("leeshome", devNaam)
 						.get();
-				String[] tmp = getTrustedResultSet.split(" split");
+				String[] tmp = getTrustedResultSet.split("/");
+				
+				for(String temp : tmp) {
+					System.out.println(temp);
+				}
 				
 				homeLatitude = Float.parseFloat(tmp[2]);
 				homeLongitude = Float.parseFloat(tmp[3]);
