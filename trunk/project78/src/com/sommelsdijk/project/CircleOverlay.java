@@ -1,6 +1,7 @@
 package com.sommelsdijk.project;
 
 import android.content.Context;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,10 +14,12 @@ import com.google.android.maps.Projection;
 
 public class CircleOverlay extends Overlay {
 
-	Context context;
-	double mLat;
-	double mLon;
-	float radius;
+	private Context context;
+	private double mLat;
+	private double mLon;
+	private float radius;
+	public final static int home = Color.BLACK;
+	public final static int trusted = Color.BLUE;
 
 	public CircleOverlay(Context _context, double _lat, double _lon,
 			float radius) {
