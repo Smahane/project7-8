@@ -2,6 +2,7 @@ package com.sommelsdijk.project;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 
@@ -17,11 +18,17 @@ public class CircleOverlay extends Overlay {
 	double mLon;
 	float radius;
 
-	public CircleOverlay(Context _context, double _lat, double _lon, float radius) {
+	public CircleOverlay(Context _context, double _lat, double _lon,
+			float radius) {
 		context = _context;
 		mLat = _lat;
 		mLon = _lon;
 		this.radius = radius;
+	}
+
+	public static int metersToRadius(float meters, MapView map, double latitude) {
+		return (int) (map.getProjection().metersToEquatorPixels(meters) * (1 / Math
+				.cos(Math.toRadians(latitude))));
 	}
 
 	public void draw(Canvas canvas, MapView mapView, boolean shadow) {
@@ -36,17 +43,27 @@ public class CircleOverlay extends Overlay {
 
 		projection.toPixels(geo, pt);
 
-		float circleRadius = this.radius;
+		float circleRadius = metersToRadius(radius, mapView, mLat);
 
 		Paint innerCirclePaint;
+		Paint outerCicrclePaint;
 
 		innerCirclePaint = new Paint();
-		innerCirclePaint.setARGB(255, 255, 255, 255);
+		innerCirclePaint.setARGB(96, 255, 255, 255);
 		innerCirclePaint.setAntiAlias(true);
 
-		innerCirclePaint.setStyle(Paint.Style.STROKE);
+		outerCicrclePaint = new Paint();
+		outerCicrclePaint.setARGB(200, 0, 0, 255);
+		outerCicrclePaint.setAntiAlias(true);
+		outerCicrclePaint.setShadowLayer((circleRadius + 5), 20f, 20f, Color.BLACK);
+
+		innerCirclePaint.setStyle(Paint.Style.FILL);
+		outerCicrclePaint.setStyle(Paint.Style.STROKE);
 
 		canvas.drawCircle((float) pt.x, (float) pt.y, circleRadius,
 				innerCirclePaint);
+
+		canvas.drawCircle((float) pt.x, (float) pt.y, circleRadius,
+				outerCicrclePaint);
 	}
 }
