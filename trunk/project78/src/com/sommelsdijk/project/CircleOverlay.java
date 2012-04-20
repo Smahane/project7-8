@@ -18,15 +18,17 @@ public class CircleOverlay extends Overlay {
 	private double mLat;
 	private double mLon;
 	private float radius;
+	private int type;
 	public final static int home = Color.BLACK;
 	public final static int trusted = Color.BLUE;
 
 	public CircleOverlay(Context _context, double _lat, double _lon,
-			float radius) {
-		context = _context;
-		mLat = _lat;
-		mLon = _lon;
+			float radius, int type) {
+		this.context = _context;
+		this.mLat = _lat;
+		this.mLon = _lon;
 		this.radius = radius;
+		this.type = type;
 	}
 
 	public static int metersToRadius(float meters, MapView map, double latitude) {
@@ -58,7 +60,7 @@ public class CircleOverlay extends Overlay {
 		outerCicrclePaint = new Paint();
 		outerCicrclePaint.setARGB(200, 0, 0, 255);
 		outerCicrclePaint.setAntiAlias(true);
-		outerCicrclePaint.setShadowLayer((circleRadius + 5), 20f, 20f, Color.BLACK);
+		outerCicrclePaint.setShadowLayer((circleRadius + 5), 20f, 20f, type);
 
 		innerCirclePaint.setStyle(Paint.Style.FILL);
 		outerCicrclePaint.setStyle(Paint.Style.STROKE);
