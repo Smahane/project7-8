@@ -167,7 +167,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 					
 					System.out.println(latitude + " " + longtitude);
 					
-					mapView.getOverlays().add(new CircleOverlay(this, latitude, longtitude, 300f));
+					mapView.getOverlays().add(new CircleOverlay(this, latitude, longtitude, 100, CircleOverlay.home));
 				}
 
 			} catch (ExecutionException e) {
