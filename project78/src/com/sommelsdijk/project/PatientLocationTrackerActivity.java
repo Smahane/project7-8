@@ -118,6 +118,8 @@ public class PatientLocationTrackerActivity extends MapActivity {
 					String[] tmp = getHomeResultSet.split(" ");
 					homeLatitude = Float.parseFloat(tmp[2]);
 					homeLongitude = Float.parseFloat(tmp[3]);
+					
+					mapView.getOverlays().add(new CircleOverlay(this, homeLatitude, homeLongitude, 100, CircleOverlay.home));
 				} catch (Exception e) {
 					Toast.makeText(this, "Thuis adres niet gevonden!", Toast.LENGTH_LONG).show();
 					Log.i(getHomeResultSet, "ResultSet is NULL");
@@ -167,7 +169,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 					
 					System.out.println(latitude + " " + longtitude);
 					
-					mapView.getOverlays().add(new CircleOverlay(this, latitude, longtitude, 100, CircleOverlay.home));
+					mapView.getOverlays().add(new CircleOverlay(this, latitude, longtitude, 100, CircleOverlay.trusted));
 				}
 
 			} catch (ExecutionException e) {
