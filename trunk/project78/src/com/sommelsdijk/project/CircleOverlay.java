@@ -54,13 +54,13 @@ public class CircleOverlay extends Overlay {
 		Paint outerCicrclePaint;
 
 		innerCirclePaint = new Paint();
-		innerCirclePaint.setARGB(96, 255, 255, 255);
+		innerCirclePaint.setARGB(20, 255, 255, 255);
 		innerCirclePaint.setAntiAlias(true);
 
 		outerCicrclePaint = new Paint();
-		outerCicrclePaint.setARGB(200, 0, 0, 255);
+		outerCicrclePaint.setColor(type);
 		outerCicrclePaint.setAntiAlias(true);
-		outerCicrclePaint.setShadowLayer((circleRadius + 5), 20f, 20f, type);
+		//outerCicrclePaint.setShadowLayer(1, 0.01f, 0.01f, Color.BLACK);
 
 		innerCirclePaint.setStyle(Paint.Style.FILL);
 		outerCicrclePaint.setStyle(Paint.Style.STROKE);
