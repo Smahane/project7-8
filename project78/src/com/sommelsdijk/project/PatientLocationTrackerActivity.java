@@ -80,9 +80,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		Log.d("devNaam", "" + devNaam);
 
 		// Gets home location from the database;
-
 		internal = false;
-
 		getHomeLocation();
 
 		this.startService(new Intent(PatientLocationTrackerActivity.this,
@@ -99,49 +97,53 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		Initialize();
 		createHomeOverlay();
 
-		myLocationOverlay.runOnFirstFix(new Runnable() {
-			public void run() {
-				mapView.getController().animateTo(
-						myLocationOverlay.getMyLocation());
-
-			}
-		});
+		/*
+		 * myLocationOverlay.runOnFirstFix(new Runnable() { public void run() {
+		 * mapView.getController().animateTo(
+		 * myLocationOverlay.getMyLocation()); } });
+		 */
 
 		mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mlocListener = new MyLocationListener();
-		mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
-				0, mlocListener);
-		
-		
-				
-		/* De SeekBar listener 
-		 * Progress is hoever de schuiver staat. Radius is de radius van de cirkel die we willen tekenen
-		 * Eerst deleten we alle bestaande overlays, om ze vervolgens opnieuw te tekenen
-		 * Inclusief de nieuwe HomeCirkel
+		mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+				1000000, 0, mlocListener);
+
+		/*
+		 * De SeekBar listener Progress is hoever de schuiver staat. Radius is
+		 * de radius van de cirkel die we willen tekenen Eerst deleten we alle
+		 * bestaande overlays, om ze vervolgens opnieuw te tekenen Inclusief de
+		 * nieuwe HomeCirkel
 		 */
-		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			int progress = 0;
 
-			   public void onProgressChanged(SeekBar seekBar, int progress,
-			     boolean fromUser) {
-			    System.out.println(" SEEKBAR VALUE =  " + progress);
-			    radius = progress*2;
-			    mapView.getOverlays().remove(CircleLocationInMapView);
-				mapView.getOverlays().clear();
-				showingTrustedLocations = false;
-				getTrustedLocation();
-				homeIsSet = false;
-			   }
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				this.progress = progress;
+			}
 
-			   public void onStartTrackingTouch(SeekBar seekBar) {
-			    // TODO Auto-generated method stub
-			   }
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+			}
 
-			   public void onStopTrackingTouch(SeekBar seekBar) {
-			    // TODO Auto-generated method stub
-			   }
-			       });
-			 		
-	} 
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				System.out.println(" SEEKBAR VALUE =  " + progress);
+				radius = progress * 2;
+				try {
+					// mapView.getOverlays().remove(CircleLocationInMapView);
+					mapView.getOverlays().clear();
+					showingTrustedLocations = false;
+					getTrustedLocation();
+					homeIsSet = false;
+					mlocManager.requestSingleUpdate(mlocManager.GPS_PROVIDER,
+							mlocListener, null);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					Log.i(tag, "Foutje met de Slider!");
+				}
+			}
+		});
+
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -155,23 +157,30 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		switch (item.getItemId()) {
 		case R.id.ShowTrustedLocs:
 			if (!showingTrustedLocations) {
-				//createHomeOverlay();
-				
 				getTrustedLocation();
+				mlocManager.requestSingleUpdate(mlocManager.GPS_PROVIDER,
+						mlocListener, null);
 			} else {
 				mapView.getOverlays().clear();
 				showingTrustedLocations = false;
 				homeIsSet = false;
+				mlocManager.requestSingleUpdate(mlocManager.GPS_PROVIDER,
+						mlocListener, null);
 			}
+			Toast.makeText(this, "Redrawing map", Toast.LENGTH_SHORT);
 			break;
-		case R.id.text: 
-			if(!ShowSeekBar){
-			seekBar.setVisibility(1);
-			ShowSeekBar = true;
-			}else{
+		case R.id.ChangeSafeZone:
+			if (!ShowSeekBar) {
+				seekBar.setVisibility(1);
+				ShowSeekBar = true;
+			} else {
 				seekBar.setVisibility(View.GONE);
 				ShowSeekBar = false;
 			}
+			break;
+		case R.id.ForceUpdate:
+			mlocManager.requestSingleUpdate(mlocManager.GPS_PROVIDER,
+					mlocListener, null);
 			break;
 		}
 		return true;
@@ -216,8 +225,8 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		if (homeOverlay.size() > 0) {
 			mapView.getOverlays().add(homeOverlay);
 			mapView.getOverlays().add(
-					new CircleOverlay(this, homeLatitude, homeLongitude, radius,
-							CircleOverlay.home));
+					new CircleOverlay(this, homeLatitude, homeLongitude,
+							radius, CircleOverlay.home));
 			CircleLocationInMapView = mapView.getOverlays().size();
 			homeIsSet = true;
 		} else {
@@ -282,10 +291,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		Drawable homeDrawable = this.getResources()
 				.getDrawable(R.drawable.home);
 		homeOverlay = new MyOverlays(this, homeDrawable, internal);
-		seekBar = (SeekBar)findViewById(R.id.seekbar);
+		seekBar = (SeekBar) findViewById(R.id.seekbar);
 		seekBar.setVisibility(View.GONE);
 		radius = 100;
-		
+
 	}
 
 	@Override
