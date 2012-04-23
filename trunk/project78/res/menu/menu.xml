@@ -4,11 +4,12 @@
     <item android:id="@+id/ShowTrustedLocs"
         android:icon="@drawable/trustedlocation"
         android:title="Show TrustedLocs" />
-    <item android:id="@+id/text"
-        android:title="Text" />
-    <item android:id="@+id/ic_launcher"
-        android:title="Icon and text"
-        android:icon="@drawable/ic_launcher" />
+    <item android:id="@+id/ChangeSafeZone"
+        android:icon="@drawable/circle_grid"
+        android:title="Change SafeZone Size" />
+    <item android:id="@+id/ForceUpdate" 
+        android:icon="@drawable/force_update"
+        android:title="Force Update" />
 
 
 </menu>

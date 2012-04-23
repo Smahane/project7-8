@@ -45,7 +45,7 @@ public class positionReceiver extends Service {
 	private static float minAccuracyMeters = 10;
 
 	private int lastStatus = 0;
-	private static boolean showingDebugToast = true;
+	private static boolean showingDebugToast = false;
 
 	private static final String tag = "GPSLoggerService";
 	private dbSchrijf schrijfdb;
