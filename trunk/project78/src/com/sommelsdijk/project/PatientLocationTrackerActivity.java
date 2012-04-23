@@ -1,7 +1,6 @@
 package com.sommelsdijk.project;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -11,11 +10,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
-import com.google.android.maps.ItemizedOverlay;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -25,9 +20,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -109,10 +101,11 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				1000000, 0, mlocListener);
 
 		/*
-		 * De SeekBar listener Progress is hoever de schuiver staat. Radius is
-		 * de radius van de cirkel die we willen tekenen Eerst deleten we alle
-		 * bestaande overlays, om ze vervolgens opnieuw te tekenen Inclusief de
-		 * nieuwe HomeCirkel
+		 * De SeekBar listener 
+		 * Progress is hoever de schuiver staat. 
+		 * Radius is de radius van de cirkel die we willen tekenen 
+		 * Eerst deleten we alle bestaande overlays, om ze vervolgens opnieuw te tekenen 
+		 * Inclusief de nieuwe HomeCirkel
 		 */
 		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			int progress = 0;
@@ -130,10 +123,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				System.out.println(" SEEKBAR VALUE =  " + progress);
 				radius = progress * 2;
 				try {
-					// mapView.getOverlays().remove(CircleLocationInMapView);
 					mapView.getOverlays().clear();
-					showingTrustedLocations = false;
-					getTrustedLocation();
 					homeIsSet = false;
 					mlocManager.requestSingleUpdate(mlocManager.GPS_PROVIDER,
 							mlocListener, null);
@@ -209,7 +199,6 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		// HTC Vision 51.8476 4.55281 2.43481e+07
 	}
 
 	private void createHomeOverlay() {
