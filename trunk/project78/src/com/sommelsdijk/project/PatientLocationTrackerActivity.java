@@ -30,7 +30,10 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.location.Criteria;
@@ -51,10 +54,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private String devNaam;
 	private float homeLatitude;
 	private float homeLongitude;
-	private MenuItem stop;
 	private boolean homeIsSet;
-	private float trustedLatitude[];
-	private float trustedLongitude[];
 	private boolean internal;
 	private static KnownOverlays TrustedLocations; // instantie van en Overlay
 													// klasse,
@@ -62,6 +62,12 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	// zijn, aanpasbaar
 	private static GeoPoint gpForTrustedLocations[];
 	private static int gpForTrustedLocationsCounter;
+	private float longtitude;
+	private float latitude;
+	private boolean showingTrustedLocations;
+	private SeekBar seekBar;
+	private float radius;
+	private boolean ShowSeekBar;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -73,12 +79,11 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		Log.d("devNaam", "" + devNaam);
 
 		// Gets home location from the database;
-		
-		internal = true;
-		
+
+		internal = false;
+
 		getHomeLocation();
-		
-		
+
 		this.startService(new Intent(PatientLocationTrackerActivity.this,
 				positionReceiver.class));
 		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
@@ -92,7 +97,6 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 		Initialize();
 		createHomeOverlay();
-		getTrustedLocation();
 
 		myLocationOverlay.runOnFirstFix(new Runnable() {
 			public void run() {
@@ -106,22 +110,78 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		mlocListener = new MyLocationListener();
 		mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
 				0, mlocListener);
+		
+		
+				
+		
+		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
 
-	} // 5secs update // 0 = locatieverandering triggert geen update
+			   public void onProgressChanged(SeekBar seekBar, int progress,
+			     boolean fromUser) {
+			    System.out.println(" SEEKBAR VALUE =  " + progress);
+			    radius = progress*2;
+			    createHomeOverlay();
+			   }
+
+			   public void onStartTrackingTouch(SeekBar seekBar) {
+			    // TODO Auto-generated method stub
+			   }
+
+			   public void onStopTrackingTouch(SeekBar seekBar) {
+			    // TODO Auto-generated method stub
+			   }
+			       });
+			 		
+	} 
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.ShowTrustedLocs:
+			if (!showingTrustedLocations) {
+				//createHomeOverlay();
+				
+				getTrustedLocation();
+			} else {
+				mapView.getOverlays().clear();
+				showingTrustedLocations = false;
+				homeIsSet = false;
+			}
+			break;
+		case R.id.text: 
+			if(!ShowSeekBar){
+			seekBar.setVisibility(1);
+			ShowSeekBar = true;
+			}else{
+				seekBar.setVisibility(View.GONE);
+				ShowSeekBar = false;
+			}
+			break;
+		}
+		return true;
+	}
 
 	private void getHomeLocation() {
 		try {
 			try {
 				String getHomeResultSet = new dbLees("project78",
-						"sommelsdijk", internal).execute("leeshome", devNaam).get();
+						"sommelsdijk", internal).execute("leeshome", devNaam)
+						.get();
 				try {
 					String[] tmp = getHomeResultSet.split(" ");
 					homeLatitude = Float.parseFloat(tmp[2]);
 					homeLongitude = Float.parseFloat(tmp[3]);
-					
-					mapView.getOverlays().add(new CircleOverlay(this, homeLatitude, homeLongitude, 100, CircleOverlay.home));
+
 				} catch (Exception e) {
-					Toast.makeText(this, "Thuis adres niet gevonden!", Toast.LENGTH_LONG).show();
+					Toast.makeText(this, "Thuis adres niet gevonden!",
+							Toast.LENGTH_LONG).show();
 					Log.i(getHomeResultSet, "ResultSet is NULL");
 				}
 
@@ -146,6 +206,9 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 		if (homeOverlay.size() > 0) {
 			mapView.getOverlays().add(homeOverlay);
+			mapView.getOverlays().add(
+					new CircleOverlay(this, homeLatitude, homeLongitude, radius,
+							CircleOverlay.home));
 			homeIsSet = true;
 		} else {
 			homeIsSet = false;
@@ -156,20 +219,21 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		try {
 			try {
 				String getTrustedResultSet = new dbLees("project78",
-						"sommelsdijk", internal).execute("leestrusted", devNaam)
-						.get();
+						"sommelsdijk", internal)
+						.execute("leestrusted", devNaam).get();
 				String[] tmp = getTrustedResultSet.split("/");
 
 				for (String s : tmp) {
 					String[] split = s.split(" ");
-					
+
 					String id = split[0];
-					float latitude = Float.parseFloat(split[1]);
-					float longtitude = Float.parseFloat(split[2]);
-					
-					System.out.println(latitude + " " + longtitude);
-					
-					mapView.getOverlays().add(new CircleOverlay(this, latitude, longtitude, 100, CircleOverlay.trusted));
+					latitude = Float.parseFloat(split[1]);
+					longtitude = Float.parseFloat(split[2]);
+
+					mapView.getOverlays().add(
+							new CircleOverlay(this, latitude, longtitude, 100,
+									CircleOverlay.trusted));
+
 				}
 
 			} catch (ExecutionException e) {
@@ -178,11 +242,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
+		showingTrustedLocations = true;
 	}
 
 	private void Initialize() {
-
 		locationTV = (TextView) findViewById(R.id.tvLocation);
 		mapView = (MapView) findViewById(R.id.mapView);
 		mapView.setBuiltInZoomControls(true);
@@ -209,6 +272,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		Drawable homeDrawable = this.getResources()
 				.getDrawable(R.drawable.home);
 		homeOverlay = new MyOverlays(this, homeDrawable, internal);
+		seekBar = (SeekBar)findViewById(R.id.seekbar);
+		seekBar.setVisibility(View.GONE);
+		radius = 100;
+		
 	}
 
 	@Override
