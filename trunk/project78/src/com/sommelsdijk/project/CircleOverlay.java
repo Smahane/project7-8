@@ -19,7 +19,7 @@ public class CircleOverlay extends Overlay {
 	private double mLon;
 	private float radius;
 	private int type;
-	public final static int home = Color.BLACK;
+	public final static int home = Color.RED;
 	public final static int trusted = Color.BLUE;
 
 	public CircleOverlay(Context _context, double _lat, double _lon,

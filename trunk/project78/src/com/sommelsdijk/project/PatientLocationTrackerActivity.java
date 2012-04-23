@@ -68,6 +68,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private SeekBar seekBar;
 	private float radius;
 	private boolean ShowSeekBar;
+	private int CircleLocationInMapView;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -113,14 +114,22 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		
 		
 				
-		
+		/* De SeekBar listener 
+		 * Progress is hoever de schuiver staat. Radius is de radius van de cirkel die we willen tekenen
+		 * Eerst deleten we alle bestaande overlays, om ze vervolgens opnieuw te tekenen
+		 * Inclusief de nieuwe HomeCirkel
+		 */
 		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
 
 			   public void onProgressChanged(SeekBar seekBar, int progress,
 			     boolean fromUser) {
 			    System.out.println(" SEEKBAR VALUE =  " + progress);
 			    radius = progress*2;
-			    createHomeOverlay();
+			    mapView.getOverlays().remove(CircleLocationInMapView);
+				mapView.getOverlays().clear();
+				showingTrustedLocations = false;
+				getTrustedLocation();
+				homeIsSet = false;
 			   }
 
 			   public void onStartTrackingTouch(SeekBar seekBar) {
@@ -209,6 +218,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			mapView.getOverlays().add(
 					new CircleOverlay(this, homeLatitude, homeLongitude, radius,
 							CircleOverlay.home));
+			CircleLocationInMapView = mapView.getOverlays().size();
 			homeIsSet = true;
 		} else {
 			homeIsSet = false;
