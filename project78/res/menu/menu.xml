@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:id="@+id/ShowTrustedLocs"
+        android:icon="@drawable/trustedlocation"
+        android:title="Show TrustedLocs" />
+    <item android:id="@+id/text"
+        android:title="Text" />
+    <item android:id="@+id/ic_launcher"
+        android:title="Icon and text"
+        android:icon="@drawable/ic_launcher" />
+
+
+</menu>
