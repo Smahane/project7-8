@@ -394,7 +394,6 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			} else {
 				return null;
 			}
-
 		}
 
 	}
