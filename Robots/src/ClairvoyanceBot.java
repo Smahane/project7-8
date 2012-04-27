@@ -38,7 +38,7 @@ public class ClairvoyanceBot extends TeamRobot {
 		double enemyY = getY() + e.getDistance() * Math.cos(Math.toRadians(enemyBearing));
 		
 		
-		Point p = new Point(enemyX, enemyY); 
+		Point p = (Point)enemyX, enemyY; 
 		
 		// Calculate x and y to target
 		double dx = p.getX() - this.getX();
