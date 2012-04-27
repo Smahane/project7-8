@@ -1,27 +1,55 @@
+import java.awt.Point;
+
 import robocode.HitWallEvent;
 import robocode.Robot;
 import robocode.ScannedRobotEvent;
+import robocode.TeamRobot;
 
 
 
-public class ClairvoyanceBot extends Robot {
+public class ClairvoyanceBot extends TeamRobot {
 
 	double bearingInDegrees = 0;
 	
 	@Override
-	public void onScannedRobot(ScannedRobotEvent event) {
+	public void onScannedRobot(ScannedRobotEvent e) {
 		// TODO Auto-generated method stub
 		
-		System.out.println(event.getName() + " " + event.getBearing());
+		System.out.println(e.getName() + " " + e.getBearing());
 		
-		bearingInDegrees = event.getBearing();
+		/*bearingInDegrees = event.getBearing();
 		if(bearingInDegrees != 0){
 			
 			turnRight(bearingInDegrees);
-			fire(1);
-			bearingInDegrees = 0;
+			fire(10);
+			bearingInDegrees = 0; 
+		
 
+		} */
+		
+		// Don't fire on teammates
+		if (isTeammate(e.getName())) {
+			return;
 		}
+		// Calculate enemy bearing
+		double enemyBearing = this.getHeading() + e.getBearing();
+		// Calculate enemy's position
+		double enemyX = getX() + e.getDistance() * Math.sin(Math.toRadians(enemyBearing));
+		double enemyY = getY() + e.getDistance() * Math.cos(Math.toRadians(enemyBearing));
+		
+		
+		Point p = new Point(enemyX, enemyY); 
+		
+		// Calculate x and y to target
+		double dx = p.getX() - this.getX();
+		double dy = p.getY() - this.getY();
+		// Calculate angle to target
+		double theta = Math.toDegrees(Math.atan2(dx, dy));
+
+		// Turn gun to target
+		turnGunRight(normalRelativeAngleDegrees(theta - getGunHeading()));
+		// Fire hard!
+		fire(3);
 	}
 	
 	@Override
@@ -29,7 +57,7 @@ public class ClairvoyanceBot extends Robot {
 		// TODO Auto-generated method stub
 		//super.run();
 		while (true) {
-			ahead(100);
+			ahead(50);
 			//turnRight(90);			
 		}
 	}
