@@ -1,6 +1,7 @@
 package schiet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import robocode.BulletHitEvent;
@@ -13,6 +14,7 @@ import robocode.RadarTurnCompleteCondition;
 import robocode.Robot;
 import robocode.Rules;
 import robocode.RobotDeathEvent;
+import robocode.Rules;
 import robocode.ScannedRobotEvent;
 import robocode.TeamRobot;
 import robocode._Robot;
@@ -23,13 +25,23 @@ public class ClairvoyanceBot extends TeamRobot {
 
 	double bearingInDegrees = 0;
 	private int radarDirection = 1;
-	private HashMap<String, EnemyBot> enemies;
+	private static double energy = 100.0;
 
 	@Override
-	public void onScannedRobot(ScannedRobotEvent e) {			
-		//System.out.println(getBattleFieldHeight() + "  " + getBattleFieldWidth());
+	public void onScannedRobot(ScannedRobotEvent e) {
+		// TODO Auto-generated method stub
+		for(EnemyBot em : EnemyMap.EnemyMap) {
+			if(em.getName().equals(e.getName())) {
+				double cur_power = em.getEnergy() - e.getEnergy();
+				
+				if(cur_power <= Rules.MAX_BULLET_POWER && cur_power >= Rules.MIN_BULLET_POWER) {
+					out.println("Schot.." + e.getName());
+				}
+			}
+		}
+		
 		int check = 0;
-		for (EnemyBot em : enemies.values()) {
+		for (EnemyBot em : EnemyMap.EnemyMap) {
 			if (e.getName().equals(em.getName())) {
 				em.update(e);
 				check = 1;
@@ -37,31 +49,33 @@ public class ClairvoyanceBot extends TeamRobot {
 		}
 
 		if (check == 0 && !(isTeammate(e.getName()))) {
-			enemies.put(e.getName(), new EnemyBot(e));
+			EnemyMap.EnemyMap.add(new EnemyBot(e));
 		}
-
-		EnemyBot tmp = null;
-		for (EnemyBot em : enemies.values()) {
-			if (tmp != null) {
-				if (em.getDistance() < tmp.getDistance()) {
-					tmp = em;
-				}
-			} else if(tmp == null) {
+		
+		EnemyBot tmp = new EnemyBot(e);
+		for(EnemyBot em : EnemyMap.EnemyMap) {
+			if(em.getEnergy() < tmp.getEnergy()) {
 				tmp = em;
 			}
 		}
+
+
 		
+		//out.println(tmp.getName() + " is victim");
+		
+
+
 		// Don't fire on teammates
 		if (isTeammate(e.getName())) {
 			return;
 		}
 
 		// Calculate enemy bearing
-		double enemyBearing = this.getHeading() + e.getBearing();
+		double enemyBearing = this.getHeading() + tmp.getBearing();
 		// Calculate enemy's position
-		double enemyX = getX() + e.getDistance()
+		double enemyX = getX() + tmp.getDistance()
 				* Math.sin(Math.toRadians(enemyBearing));
-		double enemyY = getY() + e.getDistance()
+		double enemyY = getY() + tmp.getDistance()
 				* Math.cos(Math.toRadians(enemyBearing));
 
 		Point p = new Point(enemyX, enemyY);
@@ -86,6 +100,7 @@ public class ClairvoyanceBot extends TeamRobot {
 		}
 
 		fire(3);
+		
 
 	}
 	
@@ -95,7 +110,7 @@ public class ClairvoyanceBot extends TeamRobot {
 	public void onRobotDeath(RobotDeathEvent event) {
 		//out.println(event.getName());
 		
-		Iterator<EnemyBot> itr = enemies.values().iterator();
+		Iterator<EnemyBot> itr = EnemyMap.EnemyMap.iterator();
 		while(itr.hasNext()) {
 			EnemyBot tmp = (EnemyBot) itr.next();
 			
@@ -108,7 +123,7 @@ public class ClairvoyanceBot extends TeamRobot {
 	private void sweep() {
 		double maxBearingAbs = 0, maxBearing = 0;
 		int scannedBots = 0;
-		Iterator iterator = enemies.values().iterator();
+		Iterator iterator = EnemyMap.EnemyMap.iterator();
 
 		while (iterator.hasNext()) {
 			EnemyBot tmp = (EnemyBot) iterator.next();
@@ -126,7 +141,7 @@ public class ClairvoyanceBot extends TeamRobot {
 
 		double radarTurn = 180 * radarDirection;
 		if (scannedBots == getOthers())
-			radarTurn = maxBearing + sign(maxBearing) * 22.5;
+			radarTurn = maxBearing + sign(maxBearing) * 3;
 
 		setTurnRadarRight(radarTurn);
 		radarDirection = sign(radarTurn);
@@ -219,9 +234,9 @@ public class ClairvoyanceBot extends TeamRobot {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		// super.run();
-		enemies = new HashMap<String, EnemyBot>();
-
+		// super.run()
+		EnemyMap.EnemyMap = new ArrayList<EnemyBot>();
+		
 		addCustomEvent(new RadarTurnCompleteCondition(this));
 		
 		addCustomEvent(new Condition("too_close_to_walls " + muurCheck()) {	
@@ -248,8 +263,9 @@ public class ClairvoyanceBot extends TeamRobot {
 		while (true) {		
 			ahead(50);
 			
-			for(EnemyBot em : enemies.values()) {
+			for(EnemyBot em : EnemyMap.EnemyMap) {
 				//System.out.println(em.getName() + " " + em.getDistance());
+
 			}
 
 		}

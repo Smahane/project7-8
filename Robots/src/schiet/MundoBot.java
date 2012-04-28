@@ -1,4 +1,5 @@
 package schiet;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,20 +19,23 @@ import robocode.RobotDeathEvent;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
 import robocode.TeamRobot;
-
+import robocode.util.Utils;
 
 import static robocode.util.Utils.normalRelativeAngle;
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
 public class MundoBot extends TeamRobot {
 
+	public static double energy = 100.0;
+
 	double bearingInDegrees = 0;
 	private int radarDirection = 1;
 	private HashMap<String, EnemyBot> enemies;
 
 	@Override
-	public void onScannedRobot(ScannedRobotEvent e) {			
-		//System.out.println(getBattleFieldHeight() + "  " + getBattleFieldWidth());
+	public void onScannedRobot(ScannedRobotEvent e) {
+		// System.out.println(getBattleFieldHeight() + "  " +
+		// getBattleFieldWidth());
 		int check = 0;
 		for (EnemyBot em : enemies.values()) {
 			if (e.getName().equals(em.getName())) {
@@ -50,11 +54,11 @@ public class MundoBot extends TeamRobot {
 				if (em.getDistance() < tmp.getDistance()) {
 					tmp = em;
 				}
-			} else if(tmp == null) {
+			} else if (tmp == null) {
 				tmp = em;
 			}
 		}
-		
+
 		// Don't fire on teammates
 		if (isTeammate(e.getName())) {
 			return;
@@ -76,7 +80,6 @@ public class MundoBot extends TeamRobot {
 		// Calculate angle to target
 		double theta = Math.toDegrees(Math.atan2(dx, dy));
 
-
 		// Turn gun to target
 		turnGunRight(normalRelativeAngleDegrees(theta - getGunHeading()));
 		// Fire hard!
@@ -92,18 +95,16 @@ public class MundoBot extends TeamRobot {
 		fire(3);
 
 	}
-	
-		
 
 	@Override
 	public void onRobotDeath(RobotDeathEvent event) {
-		//out.println(event.getName());
-		
+		// out.println(event.getName());
+
 		Iterator<EnemyBot> itr = enemies.values().iterator();
-		while(itr.hasNext()) {
+		while (itr.hasNext()) {
 			EnemyBot tmp = (EnemyBot) itr.next();
-			
-			if(tmp.getName().equals(event.getName())) {
+
+			if (tmp.getName().equals(event.getName())) {
 				itr.remove();
 			}
 		}
@@ -143,155 +144,170 @@ public class MundoBot extends TeamRobot {
 	public void onCustomEvent(CustomEvent e) {
 		if (e.getCondition() instanceof RadarTurnCompleteCondition)
 			sweep();
-		if (e.getCondition().getName().contains("too_close_to_walls"))
-		{
+		if (e.getCondition().getName().contains("too_close_to_walls")) {
 			double richtingBot = getHeading();
-	
-			if(muurCheck() == "Boven"){
+
+			if (muurCheck() == "Boven") {
 				System.out.println("Boven");
-					if(richtingBot <= 90){
-						turnRight(180);
-						ahead(100);
-					}if(richtingBot >90 && richtingBot<= 180){
-						turnRight(90);
-						ahead(100);
-					}if(richtingBot >180 && richtingBot<= 270){
-						ahead(100);
-					}else{
-						turnLeft(90);
-						ahead(100);
-					}
+				if (richtingBot <= 90) {
+					turnRight(180);
+					ahead(100);
+				}
+				if (richtingBot > 90 && richtingBot <= 180) {
+					turnRight(90);
+					ahead(100);
+				}
+				if (richtingBot > 180 && richtingBot <= 270) {
+					ahead(100);
+				} else {
+					turnLeft(90);
+					ahead(100);
+				}
 			}
-			if(muurCheck() == "Onder"){
+			if (muurCheck() == "Onder") {
 				System.out.println("Onder " + richtingBot);
-				if(richtingBot <= 90){
+				if (richtingBot <= 90) {
 					turnLeft(45);
 					ahead(100);
-				}if(richtingBot >90 && richtingBot<= 180){
+				}
+				if (richtingBot > 90 && richtingBot <= 180) {
 					ahead(100);
 					turnRight(90);
 					ahead(100);
-				}if(richtingBot >180 && richtingBot<= 270){
+				}
+				if (richtingBot > 180 && richtingBot <= 270) {
 					turnLeft(180);
 					ahead(100);
-				}else{
+				} else {
 					turnRight(90);
 					ahead(100);
 				}
 			}
-			if(muurCheck() ==  ("Rechts")){
+			if (muurCheck() == ("Rechts")) {
 				System.out.println("Rechts");
-				if(richtingBot <= 90){
+				if (richtingBot <= 90) {
 					turnLeft(90);
 					ahead(100);
-				}if(richtingBot >90 && richtingBot<= 180){
+				}
+				if (richtingBot > 90 && richtingBot <= 180) {
 					turnRight(180);
 					ahead(100);
-				}if(richtingBot >180 && richtingBot<= 270){
+				}
+				if (richtingBot > 180 && richtingBot <= 270) {
 					turnRight(90);
 					ahead(100);
-				}else{
+				} else {
 					ahead(100);
 				}
 			}
-			if(muurCheck() == ("Links")){
+			if (muurCheck() == ("Links")) {
 				System.out.println("Links " + richtingBot);
-				if(richtingBot <= 90){
+				if (richtingBot <= 90) {
 					turnLeft(90);
 					ahead(100);
-				}if(richtingBot >90 && richtingBot<= 180){
+				}
+				if (richtingBot > 90 && richtingBot <= 180) {
 					turnLeft(180);
 					ahead(100);
-				}if(richtingBot >180 && richtingBot<= 270){
+				}
+				if (richtingBot > 180 && richtingBot <= 270) {
 					turnRight(90);
 					ahead(100);
-				}else{
+				} else {
 					turnRight(180);
 					ahead(100);
 				}
 			}
-			// Note that the heading in Robocode is like a compass, where 0 means North, 90 means East, 180 means South, and 270 means West. 
+			// Note that the heading in Robocode is like a compass, where 0
+			// means North, 90 means East, 180 means South, and 270 means West.
 
-	
-				
-		//Richting *= (-1);
+			// Richting *= (-1);
 
-			//setAhead(10000 * Richting);
+			// setAhead(10000 * Richting);
 		}
 	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		// super.run();
-		enemies = new HashMap<String, EnemyBot>();
 
-		addCustomEvent(new RadarTurnCompleteCondition(this));
-		
-		addCustomEvent(new Condition("too_close_to_walls " + muurCheck()) {	
-			public boolean test() {
-				double wallMargin = 60;
-				return (
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+
+		while (true) {
+
+			// super.run();
+			enemies = new HashMap<String, EnemyBot>();
+
+			addCustomEvent(new RadarTurnCompleteCondition(this));
+
+			addCustomEvent(new Condition("too_close_to_walls " + muurCheck()) {
+				public boolean test() {
+					double wallMargin = 60;
+					return (
 					// we're too close to the left wall
-					(getX() <= wallMargin  ||
-					 // or we're too close to the right wall
-					 getX() >= getBattleFieldWidth() - wallMargin ||
-					 // or we're too close to the bottom wall
-					 getY() <= wallMargin ||
-					 // or we're too close to the top wall
-					 getY() >= getBattleFieldHeight() - wallMargin)
-					);
+					(getX() <= wallMargin ||
+					// or we're too close to the right wall
+							getX() >= getBattleFieldWidth() - wallMargin ||
+							// or we're too close to the bottom wall
+							getY() <= wallMargin ||
+					// or we're too close to the top wall
+					getY() >= getBattleFieldHeight() - wallMargin));
 				}
 			});
-		
-		
 
-		setAdjustRadarForGunTurn(true);
-		setTurnRadarRight(360);
+			setAdjustRadarForGunTurn(true);
+			setTurnRadarRight(360);
 
-		while (true) {		
-			ahead(50);
-			
-			for(EnemyBot em : enemies.values()) {
-				//System.out.println(em.getName() + " " + em.getDistance());
+			while (true) {
+
+				ahead(50);
+
+				turnRadarRightRadians(Double.POSITIVE_INFINITY);
+
+				for (EnemyBot em : enemies.values()) {
+					// System.out.println(em.getName() + " " +
+					// em.getDistance());
+				}
+
 			}
-
 		}
 	}
-	
+
 	public String muurCheck() {
 		double wallMargin = 60;
-		if(getX() <= wallMargin){ 	// Te dicht bij linker muur
+		if (getX() <= wallMargin) { // Te dicht bij linker muur
 			return "Links";
 		}
-		if(getX() >= getBattleFieldWidth() - wallMargin){  // Te dicht bij rechter muur
+		if (getX() >= getBattleFieldWidth() - wallMargin) { // Te dicht bij
+															// rechter muur
 			return "Rechts";
 		}
-		if(getY() <= wallMargin){	// Te dicht bij onderste muur
+		if (getY() <= wallMargin) { // Te dicht bij onderste muur
 			return "Onder";
 		}
-		if(getY() >= getBattleFieldHeight() - wallMargin){   // te dicht bij bovenste muur
+		if (getY() >= getBattleFieldHeight() - wallMargin) { // te dicht bij
+																// bovenste muur
 			return "Boven";
 		}
 		return "niets";
-		 
-			
-		}
 
+	}
 
 	@Override
 	public void onHitWall(HitWallEvent event) {
 		turnLeft(180);
 		ahead(100);
 		super.onHitWall(event);
-		
+
 		System.out.println("HIT THE WALL I FAILED");
-		
+
 	}
 
 	public void onMessageReceived(MessageEvent e) {
 		// Fire at a point
-		//System.out.println("punt ontvangen van "+ e.getSender());
+
 		if (e.getMessage() instanceof Point) {
 			Point p = (Point) e.getMessage();
 			// Calculate x and y to target
@@ -306,25 +322,22 @@ public class MundoBot extends TeamRobot {
 			fire(3);
 		} // Set our colors
 	}
-	@Override
+
 	public void onBulletHit(BulletHitEvent event) {
 		// TODO Auto-generated method stub
 		super.onBulletHit(event);
-		if(event.getName().contains("schiet")){
+		if (event.getName().contains("schiet")) {
 			ahead(10);
 			System.out.println("EIGEN TEAM GESCHOTEN");
+
 		}
+
 	}
-	
+
 	@Override
-	public void onHitRobot(HitRobotEvent event) {
-		// TODO Auto-generated method stub
-		super.onHitRobot(event);
-		turnLeft(180);
-		ahead(100);
-		if (getGunHeat() == 0) {
-			fire(Rules.MAX_BULLET_POWER);
-		}
+	public void onHitByBullet(HitByBulletEvent event) {
+		turnRight(50);
+		ahead(50);
 	}
 
 	@Override
