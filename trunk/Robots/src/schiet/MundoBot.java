@@ -18,10 +18,9 @@ public class MundoBot extends TeamRobot {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		setAllColors(Color.pink);
 		while (true) {
 			ahead(50);
-			System.out.println("Test");
+			//System.out.println("Test");
 
 		}
 
