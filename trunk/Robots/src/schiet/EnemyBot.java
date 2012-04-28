@@ -62,7 +62,7 @@ public class EnemyBot {
 		return energy;
 	}
 
-	public double getHealing() {
+	public double getHeading() {
 		return heading;
 	}
 

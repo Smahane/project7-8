@@ -20,7 +20,7 @@ public class SorakaBot extends Robot {
 			//turnRight(90);
 			
 			if(getOthers() != 0){
-		fireBullet(4);}
+		fireBullet(3);}
 		}
 	}
 
