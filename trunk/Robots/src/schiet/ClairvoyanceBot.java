@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import robocode.BulletHitEvent;
+import robocode.Condition;
 import robocode.HitRobotEvent;
 import robocode.CustomEvent;
 import robocode.HitWallEvent;
@@ -14,6 +15,7 @@ import robocode.Rules;
 import robocode.RobotDeathEvent;
 import robocode.ScannedRobotEvent;
 import robocode.TeamRobot;
+import robocode._Robot;
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 import static robocode.util.Utils.normalRelativeAngle;
 
@@ -25,8 +27,7 @@ public class ClairvoyanceBot extends TeamRobot {
 
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {			
-		System.out.println(getBattleFieldHeight() + "  " + getBattleFieldWidth());
-		
+		//System.out.println(getBattleFieldHeight() + "  " + getBattleFieldWidth());
 		int check = 0;
 		for (EnemyBot em : enemies.values()) {
 			if (e.getName().equals(em.getName())) {
@@ -87,10 +88,12 @@ public class ClairvoyanceBot extends TeamRobot {
 		fire(3);
 
 	}
+	
+		
 
 	@Override
 	public void onRobotDeath(RobotDeathEvent event) {
-		out.println(event.getName());
+		//out.println(event.getName());
 		
 		Iterator<EnemyBot> itr = enemies.values().iterator();
 		while(itr.hasNext()) {
@@ -136,6 +139,79 @@ public class ClairvoyanceBot extends TeamRobot {
 	public void onCustomEvent(CustomEvent e) {
 		if (e.getCondition() instanceof RadarTurnCompleteCondition)
 			sweep();
+		if (e.getCondition().getName().contains("too_close_to_walls"))
+		{
+			double richtingBot = getHeading();
+	
+			if(muurCheck() == "Boven"){
+				System.out.println("Boven");
+					if(richtingBot <= 90){
+						turnRight(180);
+						ahead(100);
+					}if(richtingBot >90 && richtingBot<= 180){
+						turnRight(90);
+						ahead(100);
+					}if(richtingBot >180 && richtingBot<= 270){
+						ahead(100);
+					}else{
+						turnLeft(90);
+						ahead(100);
+					}
+			}
+			if(muurCheck() == "Onder"){
+				System.out.println("Onder " + richtingBot);
+				if(richtingBot <= 90){
+					turnLeft(45);
+					ahead(100);
+				}if(richtingBot >90 && richtingBot<= 180){
+					turnRight(90);
+					ahead(100);
+				}if(richtingBot >180 && richtingBot<= 270){
+					turnLeft(180);
+					ahead(100);
+				}else{
+					turnRight(90);
+					ahead(100);
+				}
+			}
+			if(muurCheck() ==  ("Rechts")){
+				System.out.println("Rechts");
+				if(richtingBot <= 90){
+					turnLeft(90);
+					ahead(100);
+				}if(richtingBot >90 && richtingBot<= 180){
+					turnRight(180);
+					ahead(100);
+				}if(richtingBot >180 && richtingBot<= 270){
+					turnRight(90);
+					ahead(100);
+				}else{
+					ahead(100);
+				}
+			}
+			if(muurCheck() == ("Links")){
+				System.out.println("Links");
+				if(richtingBot <= 90){
+					turnRight(90);
+					ahead(100);
+				}if(richtingBot >90 && richtingBot<= 180){
+					ahead(100);
+				}if(richtingBot >180 && richtingBot<= 270){
+					turnLeft(90);
+					ahead(100);
+				}else{
+					turnLeft(180);
+					ahead(100);
+				}
+			}
+			// Note that the heading in Robocode is like a compass, where 0 means North, 90 means East, 180 means South, and 270 means West. 
+
+	
+				
+		//Richting *= (-1);
+
+			//setAhead(10000 * Richting);
+		}
 	}
 
 	@Override
@@ -145,36 +221,70 @@ public class ClairvoyanceBot extends TeamRobot {
 		enemies = new HashMap<String, EnemyBot>();
 
 		addCustomEvent(new RadarTurnCompleteCondition(this));
+		
+		addCustomEvent(new Condition("too_close_to_walls " + muurCheck()) {	
+			public boolean test() {
+				double wallMargin = 60;
+				return (
+					// we're too close to the left wall
+					(getX() <= wallMargin  ||
+					 // or we're too close to the right wall
+					 getX() >= getBattleFieldWidth() - wallMargin ||
+					 // or we're too close to the bottom wall
+					 getY() <= wallMargin ||
+					 // or we're too close to the top wall
+					 getY() >= getBattleFieldHeight() - wallMargin)
+					);
+				}
+			});
+		
+		
+
 		setAdjustRadarForGunTurn(true);
 		setTurnRadarRight(360);
 
-		while (true) {
-			
-			double dy = this.getY();
-			double dx = this.getX();
-			
-			/*if(dy <= 40 || dy <= (getBattleFieldHeight() - 40)){
-				back(100);
-				System.out.println("Dodged the Wall");
-			}
-			if(dx <= 40 || dx <= (getBattleFieldWidth() - 40)){
-				back(100);
-				System.out.println("Dodged the Wall");
-			}	*/
-			
+		while (true) {		
 			ahead(50);
 			
 			for(EnemyBot em : enemies.values()) {
-				System.out.println(em.getName() + " " + em.getDistance());
+				//System.out.println(em.getName() + " " + em.getDistance());
 			}
 
 		}
 	}
+	
+	public String muurCheck() {
+		double wallMargin = 60;
+		if(getX() <= wallMargin){ 	// Te dicht bij linker muur
+			return "Links";
+		}
+		if(getX() >= getBattleFieldWidth() - wallMargin){  // Te dicht bij rechter muur
+			return "Rechts";
+		}
+		if(getY() <= wallMargin){	// Te dicht bij onderste muur
+			return "Onder";
+		}
+		if(getY() >= getBattleFieldHeight() - wallMargin){   // te dicht bij bovenste muur
+			return "Boven";
+		}
+		return "niets";
+		 
+			
+		}
+
+
+
+	// Don't get too close to the walls
+	
 
 		
 	@Override
 	public void onHitWall(HitWallEvent event) {
 		// TODO Auto-generated method stub
+		
+		
+		turnLeft(180);
+		ahead(100);
 		super.onHitWall(event);
 		
 		System.out.println("HIT THE WALL I FAILED");
@@ -183,7 +293,7 @@ public class ClairvoyanceBot extends TeamRobot {
 
 	public void onMessageReceived(MessageEvent e) {
 		// Fire at a point
-		System.out.println("punt ontvangen van "+ e.getSender());
+		//System.out.println("punt ontvangen van "+ e.getSender());
 		if (e.getMessage() instanceof Point) {
 			Point p = (Point) e.getMessage();
 			// Calculate x and y to target
@@ -212,7 +322,8 @@ public class ClairvoyanceBot extends TeamRobot {
 	public void onHitRobot(HitRobotEvent event) {
 		// TODO Auto-generated method stub
 		super.onHitRobot(event);
-		turnRight(180);
+		turnLeft(180);
+		ahead(100);
 		if (getGunHeat() == 0) {
 			fire(Rules.MAX_BULLET_POWER);
 		}
