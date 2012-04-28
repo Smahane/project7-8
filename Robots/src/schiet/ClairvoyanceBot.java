@@ -3,16 +3,17 @@ package schiet;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import robocode.CustomEvent;
+import robocode.BulletHitEvent;
 import robocode.HitRobotEvent;
+import robocode.CustomEvent;
 import robocode.HitWallEvent;
+import robocode.MessageEvent;
 import robocode.RadarTurnCompleteCondition;
 import robocode.Robot;
+import robocode.Rules;
 import robocode.RobotDeathEvent;
 import robocode.ScannedRobotEvent;
 import robocode.TeamRobot;
-
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 import static robocode.util.Utils.normalRelativeAngle;
 
@@ -23,9 +24,9 @@ public class ClairvoyanceBot extends TeamRobot {
 	private HashMap<String, EnemyBot> enemies;
 
 	@Override
-	public void onScannedRobot(ScannedRobotEvent e) {
-		// TODO Auto-generated method stub
-
+	public void onScannedRobot(ScannedRobotEvent e) {			
+		System.out.println(getBattleFieldHeight() + "  " + getBattleFieldWidth());
+		
 		int check = 0;
 		for (EnemyBot em : enemies.values()) {
 			if (e.getName().equals(em.getName())) {
@@ -48,7 +49,7 @@ public class ClairvoyanceBot extends TeamRobot {
 				tmp = em;
 			}
 		}
-
+		
 		// Don't fire on teammates
 		if (isTeammate(e.getName())) {
 			return;
@@ -70,6 +71,7 @@ public class ClairvoyanceBot extends TeamRobot {
 		// Calculate angle to target
 		double theta = Math.toDegrees(Math.atan2(dx, dy));
 
+
 		// Turn gun to target
 		turnGunRight(normalRelativeAngleDegrees(theta - getGunHeading()));
 		// Fire hard!
@@ -84,12 +86,6 @@ public class ClairvoyanceBot extends TeamRobot {
 
 		fire(3);
 
-	}
-
-	@Override
-	public void onHitRobot(HitRobotEvent event) {
-		turnLeft(100);
-		ahead(100);
 	}
 
 	@Override
@@ -153,34 +149,85 @@ public class ClairvoyanceBot extends TeamRobot {
 		setTurnRadarRight(360);
 
 		while (true) {
+			
+			double dy = this.getY();
+			double dx = this.getX();
+			
+			/*if(dy <= 40 || dy <= (getBattleFieldHeight() - 40)){
+				back(100);
+				System.out.println("Dodged the Wall");
+			}
+			if(dx <= 40 || dx <= (getBattleFieldWidth() - 40)){
+				back(100);
+				System.out.println("Dodged the Wall");
+			}	*/
+			
 			ahead(50);
 			
 			for(EnemyBot em : enemies.values()) {
 				System.out.println(em.getName() + " " + em.getDistance());
 			}
+
 		}
 	}
 
-	@Override
-	public double getRadarHeading() {
-		// TODO Auto-generated method stub
-		return super.getRadarHeading();
-	}
-
-	@Override
-	public void scan() {
-		// TODO Auto-generated method stub
-
-		super.scan();
-	}
-
+		
 	@Override
 	public void onHitWall(HitWallEvent event) {
 		// TODO Auto-generated method stub
 		super.onHitWall(event);
+		
+		System.out.println("HIT THE WALL I FAILED");
+		
+	}
 
-		turnRight(100);
+	public void onMessageReceived(MessageEvent e) {
+		// Fire at a point
+		System.out.println("punt ontvangen van "+ e.getSender());
+		if (e.getMessage() instanceof Point) {
+			Point p = (Point) e.getMessage();
+			// Calculate x and y to target
+			double dx = p.getX() - this.getX();
+			double dy = p.getY() - this.getY();
+			// Calculate angle to target
+			double theta = Math.toDegrees(Math.atan2(dx, dy));
 
+			// Turn gun to target
+			turnGunRight(normalRelativeAngleDegrees(theta - getGunHeading()));
+			// Fire hard!
+			fire(3);
+		} // Set our colors
+	}
+	@Override
+	public void onBulletHit(BulletHitEvent event) {
+		// TODO Auto-generated method stub
+		super.onBulletHit(event);
+		if(event.getName().contains("schiet")){
+			ahead(10);
+			System.out.println("EIGEN TEAM GESCHOTEN");
+		}
+	}
+	
+	@Override
+	public void onHitRobot(HitRobotEvent event) {
+		// TODO Auto-generated method stub
+		super.onHitRobot(event);
+		turnRight(180);
+		if (getGunHeat() == 0) {
+			fire(Rules.MAX_BULLET_POWER);
+		}
+	}
+
+	@Override
+	public double getBattleFieldHeight() {
+		// TODO Auto-generated method stub
+		return super.getBattleFieldHeight();
+	}
+
+	@Override
+	public double getBattleFieldWidth() {
+		// TODO Auto-generated method stub
+		return super.getBattleFieldWidth();
 	}
 
 }
