@@ -164,6 +164,7 @@ public class ClairvoyanceBot extends TeamRobot {
 					turnLeft(45);
 					ahead(100);
 				}if(richtingBot >90 && richtingBot<= 180){
+					ahead(100);
 					turnRight(90);
 					ahead(100);
 				}if(richtingBot >180 && richtingBot<= 270){
@@ -190,17 +191,18 @@ public class ClairvoyanceBot extends TeamRobot {
 				}
 			}
 			if(muurCheck() == ("Links")){
-				System.out.println("Links");
+				System.out.println("Links " + richtingBot);
 				if(richtingBot <= 90){
-					turnRight(90);
-					ahead(100);
-				}if(richtingBot >90 && richtingBot<= 180){
-					ahead(100);
-				}if(richtingBot >180 && richtingBot<= 270){
 					turnLeft(90);
 					ahead(100);
-				}else{
+				}if(richtingBot >90 && richtingBot<= 180){
 					turnLeft(180);
+					ahead(100);
+				}if(richtingBot >180 && richtingBot<= 270){
+					turnRight(90);
+					ahead(100);
+				}else{
+					turnRight(180);
 					ahead(100);
 				}
 			}
