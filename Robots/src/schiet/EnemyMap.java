@@ -1,13 +1,14 @@
 package schiet;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class EnemyMap {
 
-	public static ArrayList<EnemyBot> EnemyMap;
+	public static HashSet<EnemyBot> EnemyMap;
 	
 	public EnemyMap() {
-		EnemyMap = new ArrayList<EnemyBot>();
+		EnemyMap = new HashSet<EnemyBot>();
 	}
 
 }
