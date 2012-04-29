@@ -1,39 +1,48 @@
 package schiet;
+
+import robocode.AdvancedRobot;
 import robocode.HitWallEvent;
 import robocode.Robot;
 import robocode.ScannedRobotEvent;
+import robocode.util.Utils;
 
-public class SorakaBot extends Robot {
+public class SorakaBot extends AdvancedRobot {
 
 	@Override
-	public void onScannedRobot(ScannedRobotEvent event) {
+	public void onScannedRobot(ScannedRobotEvent e) {
 		// TODO Auto-generated method stub
-		super.onScannedRobot(event);
+		double absBearing = e.getBearingRadians() + getHeadingRadians();
+
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(absBearing
+				- getRadarHeadingRadians()) * 2);
+
+		ahead(100);
+
 	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		//super.run();
+		// super.run();
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		
 		while (true) {
-			ahead(100);
-			//turnRight(90);
-			
-			if(getOthers() != 0){
-		fireBullet(3);}
+
+			turnRadarRightRadians(Double.POSITIVE_INFINITY);
 		}
 	}
 
 	@Override
 	public void onHitWall(HitWallEvent event) {
 		super.onHitWall(event);
-		
+
 		turnLeft(180);
 	}
 
 	@Override
 	public int getOthers() {
-		
+
 		return super.getOthers();
 	}
 

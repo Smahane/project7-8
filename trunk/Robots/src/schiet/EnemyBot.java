@@ -2,9 +2,15 @@ package schiet;
 
 import robocode.ScannedRobotEvent;
 
-public class EnemyBot {
+public class EnemyBot implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private double bearing;
+	private double bearingRadians;
 	private double distance;
 	private double energy;
 	private double heading;
@@ -22,6 +28,7 @@ public class EnemyBot {
 		this.heading = e.getHeading();
 		this.name = e.getName();
 		this.velocity = e.getVelocity();
+		this.bearingRadians = e.getBearingRadians();
 	}
 
 	void update(ScannedRobotEvent e) {
@@ -31,6 +38,11 @@ public class EnemyBot {
 		this.heading = e.getHeading();
 		this.name = e.getName();
 		this.velocity = e.getVelocity();
+		this.bearingRadians = e.getBearingRadians();
+	}
+
+	public double getBearingRadians() {
+		return bearingRadians;
 	}
 
 	void reset() {
@@ -40,6 +52,7 @@ public class EnemyBot {
 		this.heading = 0.0;
 		this.name = "";
 		this.velocity = 0.0;
+		this.bearingRadians = 0.0;
 	}
 
 	boolean none() {

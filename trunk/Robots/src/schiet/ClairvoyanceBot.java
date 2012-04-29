@@ -1,8 +1,10 @@
 package schiet;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import robocode.BulletHitEvent;
 import robocode.Condition;
@@ -40,6 +42,15 @@ public class ClairvoyanceBot extends TeamRobot {
 			}
 		}
 		
+		EnemyBot tmp = new EnemyBot(e);
+		for(EnemyBot em : EnemyMap.EnemyMap) {
+			if(em.getEnergy() < tmp.getEnergy()) {
+				tmp = em;
+			}
+		}
+		
+		out.println(EnemyMap.EnemyMap.size());
+		
 		int check = 0;
 		for (EnemyBot em : EnemyMap.EnemyMap) {
 			if (e.getName().equals(em.getName())) {
@@ -52,19 +63,13 @@ public class ClairvoyanceBot extends TeamRobot {
 			EnemyMap.EnemyMap.add(new EnemyBot(e));
 		}
 		
-		EnemyBot tmp = new EnemyBot(e);
-		for(EnemyBot em : EnemyMap.EnemyMap) {
-			if(em.getEnergy() < tmp.getEnergy()) {
-				tmp = em;
-			}
+		if(EnemyMap.EnemyMap.size() >= getOthers()) {
+			EnemyMap.EnemyMap.clear();
+			setTurnRadarLeft(getRadarTurnRemaining());
 		}
-
-
 		
-		//out.println(tmp.getName() + " is victim");
+		out.println(tmp.getName() + " is victim");
 		
-
-
 		// Don't fire on teammates
 		if (isTeammate(e.getName())) {
 			return;
@@ -92,7 +97,7 @@ public class ClairvoyanceBot extends TeamRobot {
 		// Fire hard!
 
 		try {
-			broadcastMessage(new Point(enemyX, enemyY));
+			broadcastMessage(tmp);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			out.println("Kon niet verzenden");
@@ -101,7 +106,6 @@ public class ClairvoyanceBot extends TeamRobot {
 
 		fire(3);
 		
-
 	}
 	
 		
@@ -235,9 +239,9 @@ public class ClairvoyanceBot extends TeamRobot {
 	public void run() {
 		// TODO Auto-generated method stub
 		// super.run()
-		EnemyMap.EnemyMap = new ArrayList<EnemyBot>();
+		EnemyMap.EnemyMap = new HashSet<EnemyBot>();
 		
-		addCustomEvent(new RadarTurnCompleteCondition(this));
+		//addCustomEvent(new RadarTurnCompleteCondition(this));
 		
 		addCustomEvent(new Condition("too_close_to_walls " + muurCheck()) {	
 			public boolean test() {
@@ -254,17 +258,13 @@ public class ClairvoyanceBot extends TeamRobot {
 					);
 				}
 			});
-		
-		
-
-		setAdjustRadarForGunTurn(true);
-		setTurnRadarRight(360);
 
 		while (true) {		
 			ahead(50);
+			turnRadarRightRadians(Double.POSITIVE_INFINITY);
 			
 			for(EnemyBot em : EnemyMap.EnemyMap) {
-				//System.out.println(em.getName() + " " + em.getDistance());
+				System.out.println(em.getName() + " " + em.getDistance());
 
 			}
 
@@ -308,30 +308,13 @@ public class ClairvoyanceBot extends TeamRobot {
 		System.out.println("HIT THE WALL I FAILED");
 		
 	}
-
-	public void onMessageReceived(MessageEvent e) {
-		// Fire at a point
-		//System.out.println("punt ontvangen van "+ e.getSender());
-		if (e.getMessage() instanceof Point) {
-			Point p = (Point) e.getMessage();
-			// Calculate x and y to target
-			double dx = p.getX() - this.getX();
-			double dy = p.getY() - this.getY();
-			// Calculate angle to target
-			double theta = Math.toDegrees(Math.atan2(dx, dy));
-
-			// Turn gun to target
-			turnGunRight(normalRelativeAngleDegrees(theta - getGunHeading()));
-			// Fire hard!
-			fire(3);
-		} // Set our colors
-	}
+	
 	@Override
 	public void onBulletHit(BulletHitEvent event) {
 		// TODO Auto-generated method stub
 		super.onBulletHit(event);
 		if(event.getName().contains("schiet")){
-			ahead(10);
+			ahead(60);
 			System.out.println("EIGEN TEAM GESCHOTEN");
 		}
 	}

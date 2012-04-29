@@ -15,7 +15,7 @@ import robocode.util.Utils;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
-public class MundoBot extends TeamRobot {
+public class IgniteBot extends TeamRobot {
 
 	public static double energy = 100.0;
 	private String target;
