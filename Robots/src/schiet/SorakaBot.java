@@ -8,6 +8,10 @@ import robocode.util.Utils;
 
 public class SorakaBot extends AdvancedRobot {
 
+	
+	public SorakaBot() {
+		
+	}
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
 		// TODO Auto-generated method stub
@@ -17,6 +21,7 @@ public class SorakaBot extends AdvancedRobot {
 				- getRadarHeadingRadians()) * 2);
 
 		ahead(100);
+		
 
 	}
 
@@ -37,7 +42,7 @@ public class SorakaBot extends AdvancedRobot {
 	public void onHitWall(HitWallEvent event) {
 		super.onHitWall(event);
 
-		turnLeft(180);
+		turnLeft(90);
 	}
 
 	@Override

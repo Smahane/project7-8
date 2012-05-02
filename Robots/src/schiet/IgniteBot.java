@@ -1,7 +1,9 @@
 package schiet;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 
+import robocode.AdvancedRobot;
 import robocode.GunTurnCompleteCondition;
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
@@ -17,8 +19,13 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
 
 public class IgniteBot extends TeamRobot {
 
-	public static double energy = 100.0;
+	private static double energy = 100.0;
+	private static Targeting targeting;
 	private String target;
+
+	public IgniteBot() {
+		targeting = new Targeting(this);
+	}
 
 	@Override
 	public void run() {
@@ -68,50 +75,14 @@ public class IgniteBot extends TeamRobot {
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
 
-		double cur_power = energy - e.getEnergy();
-		if (cur_power < 3.01 && cur_power > 0.09) {
-			out.println("shot");
-			turnLeft(90);
-			ahead(50);
-		}
+		targeting.onScannedRobot(e);
 
-		energy = e.getEnergy();
-
-		if (target == null) {
-		}
-
-		if (e.getName().equals(target)) {
-			double absBearing = e.getBearingRadians() + getHeadingRadians();
-
-			setTurnRadarRightRadians(Utils.normalRelativeAngle(absBearing
-					- getRadarHeadingRadians()) * 2);
-
-			double enemyBearing = this.getHeading() + e.getBearing();
-			// Calculate enemy's position
-			double enemyX = getX() + e.getDistance()
-					* Math.sin(Math.toRadians(enemyBearing));
-			double enemyY = getY() + e.getDistance()
-					* Math.cos(Math.toRadians(enemyBearing));
-
-			Point p = new Point(enemyX, enemyY);
-
-			// Calculate x and y to target
-			double dx = p.getX() - this.getX();
-			double dy = p.getY() - this.getY();
-			// Calculate angle to target
-			double theta = Math.toDegrees(Math.atan2(dx, dy));
-
-			// Turn gun to target
-			turnGunRight(normalRelativeAngleDegrees(theta - getGunHeading()));
-
-			fire(3);
-		}
+	
 
 	}
 
 	@Override
 	public void onHitByBullet(HitByBulletEvent event) {
-		turnRight(50);
 		ahead(50);
 	}
 
@@ -120,9 +91,6 @@ public class IgniteBot extends TeamRobot {
 		// TODO Auto-generated method stub
 		super.onHitRobot(event);
 
-		if (getGunHeat() == 0) {
-			fire(Rules.MAX_BULLET_POWER);
-		}
 	}
 
 	@Override
