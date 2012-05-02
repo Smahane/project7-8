@@ -1,5 +1,7 @@
 package schiet;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class ClairvoyanceBot extends TeamRobot {
 	double bearingInDegrees = 0;
 	private int radarDirection = 1;
 	private static double energy = 100.0;
+	Point2D emloc = null;
 
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
@@ -48,8 +51,7 @@ public class ClairvoyanceBot extends TeamRobot {
 				tmp = em;
 			}
 		}
-		
-		out.println(EnemyMap.EnemyMap.size());
+	
 		
 		int check = 0;
 		for (EnemyBot em : EnemyMap.EnemyMap) {
@@ -107,8 +109,13 @@ public class ClairvoyanceBot extends TeamRobot {
 		fire(3);
 		
 	}
-	
 		
+	@Override
+	public void onPaint(Graphics2D g) {
+		// TODO Auto-generated method stub
+		g.setColor(java.awt.Color.blue);
+		g.drawRect((int)emloc.getX(), (int)emloc.getY(), 50, 50);
+	}
 
 	@Override
 	public void onRobotDeath(RobotDeathEvent event) {
