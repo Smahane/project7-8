@@ -1,7 +1,9 @@
 package com.schriek.servlet;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,12 +23,16 @@ public class Servlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection conn;
 	private Statement s;
-
+	private DecimalFormat format;
+	
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
 	public Servlet() {
 		super();
+		
+		format = new DecimalFormat("##.##");
+		format.setRoundingMode(RoundingMode.HALF_UP);
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -43,9 +49,7 @@ public class Servlet extends HttpServlet {
 			while (res.next()) {
 				if (!res.getString("TABLE_NAME").equalsIgnoreCase("home")
 						&& !res.getString("TABLE_NAME").equalsIgnoreCase(
-								"TrustedLocations")
-						&& !res.getString("TABLE_NAME").equalsIgnoreCase(
-								"Vision")) {
+								"TrustedLocations")) {
 					System.out.println(res.getString("TABLE_NAME"));
 
 					ResultSet results = s.executeQuery("SELECT * FROM "
@@ -71,13 +75,14 @@ public class Servlet extends HttpServlet {
 					System.out.println(rset_lng.length + " " + rset_lat.length);
 
 					List<String> locations = new LinkedList<String>();
-					List<String> temp = new LinkedList<String>();
 					locations.add("" + rset_lng[1] + " " + rset_lat[1]);
 					
 					for (int i = 1; i < res_size; i++) {
 
-						System.out.println(i);
+						//System.out.println(locations.size());
 						int ok = 0;
+						List<String> temp = new LinkedList<String>();
+						
 						for (ListIterator<String> it = locations.listIterator(); it
 								.hasNext();) {
 							String e = it.next();
@@ -87,20 +92,30 @@ public class Servlet extends HttpServlet {
 									.floatValue();
 							float latitude = Float.valueOf(split[1].trim())
 									.floatValue();
-
+							
 							double dist = Utils.distFrom((double) latitude,
 									(double) longtitude, (double) rset_lat[i],
 									(double) rset_lng[i]);
 
-							if (dist > 1.0) {
-								System.out.println("" + rset_lng[i] + " " + rset_lat[i]);
+							
+							if (dist > 1.0 && ok != 2) {
+								ok = 1;
+								temp.add("" + rset_lng[i] + " " + rset_lat[i] + " " + dist);
+							} else {
+								ok = 2;
 							}
 						}
+						
+						if(ok == 1) {
+							locations.addAll(temp);
+						}
+						
 					}
-
-					for (String e : temp) {
+					
+					for(String e : locations) {
 						System.out.println(e);
 					}
+
 				}
 			}
 
