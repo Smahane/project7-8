@@ -15,7 +15,7 @@ import robocode.util.Utils;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
-public class MundoBot extends TeamRobot {
+public class MundoBot extends TeamRobot implements Elections{
 
 	public static double energy = 100.0;
 	private static Targeting targeting;
@@ -74,9 +74,11 @@ public class MundoBot extends TeamRobot {
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
 
-		double enemyAbsoluteBearing = getHeadingRadians()
-				+ e.getBearingRadians();
-
+		if(isTeammate(e.getName())) {
+			out.println("return");
+			return;
+		}
+		
 		targeting.onScannedRobot(e);
 
 	}
@@ -104,6 +106,12 @@ public class MundoBot extends TeamRobot {
 
 		turnRight(100);
 
+	}
+
+	@Override
+	public void setLeader(boolean isLeader) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

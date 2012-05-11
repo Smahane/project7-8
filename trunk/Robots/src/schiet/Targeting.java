@@ -17,6 +17,9 @@ public class Targeting {
 	}
 	
 	public void onScannedRobot(ScannedRobotEvent e) {
+		/*
+		 * Hoek van enemy
+		 */
 		double enemyAbsoluteBearing = robot.getHeadingRadians()
 				+ e.getBearingRadians();
 		double enemyDistance = e.getDistance();
@@ -27,6 +30,9 @@ public class Targeting {
 					* Math.sin(e.getHeadingRadians() - enemyAbsoluteBearing));
 			// System.out.println(lateralDirection);
 		}
+		/*
+		 * Wave vullen
+		 */
 		Wave wave = new Wave(robot);
 		wave.gunLocation = new Point2D.Double(robot.getX(), robot.getY());
 		Wave.targetLocation = schiet.Utils.project(wave.gunLocation,
@@ -36,6 +42,10 @@ public class Targeting {
 		wave.setSegmentations(enemyDistance, enemyVelocity, lastEnemyVelocity);
 		lastEnemyVelocity = enemyVelocity;
 		wave.bearing = enemyAbsoluteBearing;
+		
+		/*
+		 * Gun draaien en vuren
+		 */
 		robot.setTurnGunRightRadians(Utils
 				.normalRelativeAngle(enemyAbsoluteBearing
 						- robot.getGunHeadingRadians()
@@ -45,6 +55,10 @@ public class Targeting {
 			robot.addCustomEvent(wave);
 			//ClairvoyanceBot.waves.add(wave);
 		}
+		
+		/*
+		 * Radar locken
+		 */
 		robot.setTurnRadarRightRadians(Utils
 				.normalRelativeAngle(enemyAbsoluteBearing
 						- robot.getRadarHeadingRadians()) * 2);
