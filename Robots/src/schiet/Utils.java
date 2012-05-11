@@ -3,10 +3,23 @@ package schiet;
 import java.awt.geom.Point2D;
 
 public class Utils {
+	
+	/**
+	 * Bullet snelheid
+	 * @param power
+	 * @return
+	 */
 	static double bulletVelocity(double power) {
 		return 20 - 3 * power;
 	}
-
+	
+	/**
+	 * Enemy coördinaten bepalen
+	 * @param sourceLocation
+	 * @param angle
+	 * @param length
+	 * @return
+	 */
 	static Point2D project(Point2D sourceLocation, double angle, double length) {
 		return new Point2D.Double(sourceLocation.getX() + Math.sin(angle)
 				* length, sourceLocation.getY() + Math.cos(angle) * length);

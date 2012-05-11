@@ -25,7 +25,7 @@ import robocode._Robot;
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 import static robocode.util.Utils.normalRelativeAngle;
 
-public class ClairvoyanceBot extends TeamRobot {
+public class ClairvoyanceBot extends TeamRobot implements Elections {
 
 	double bearingInDegrees = 0;
 	private int radarDirection = 1;
@@ -52,7 +52,6 @@ public class ClairvoyanceBot extends TeamRobot {
 			}
 		}
 	
-		
 		int check = 0;
 		for (EnemyBot em : EnemyMap.EnemyMap) {
 			if (e.getName().equals(em.getName())) {
@@ -246,7 +245,11 @@ public class ClairvoyanceBot extends TeamRobot {
 	public void run() {
 		// TODO Auto-generated method stub
 		// super.run()
+		
+		HashMap<String, TeamRobot> team;
+	
 		EnemyMap.EnemyMap = new HashSet<EnemyBot>();
+		//TeamComp comp = new TeamComp(robots)
 		
 		//addCustomEvent(new RadarTurnCompleteCondition(this));
 		
@@ -347,6 +350,12 @@ public class ClairvoyanceBot extends TeamRobot {
 	public double getBattleFieldWidth() {
 		// TODO Auto-generated method stub
 		return super.getBattleFieldWidth();
+	}
+
+	@Override
+	public void setLeader(boolean isLeader) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
