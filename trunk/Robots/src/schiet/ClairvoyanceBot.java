@@ -1,30 +1,22 @@
 package schiet;
 
+import static robocode.util.Utils.normalRelativeAngleDegrees;
+
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+
 import robocode.BulletHitEvent;
-import robocode.Condition;
 import robocode.DeathEvent;
 import robocode.HitRobotEvent;
-import robocode.CustomEvent;
 import robocode.HitWallEvent;
-import robocode.MessageEvent;
-import robocode.RadarTurnCompleteCondition;
-import robocode.Robot;
-import robocode.Rules;
 import robocode.RobotDeathEvent;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
 import robocode.TeamRobot;
-import robocode._Robot;
-import static robocode.util.Utils.normalRelativeAngleDegrees;
-import static robocode.util.Utils.normalRelativeAngle;
 
 public class ClairvoyanceBot extends TeamRobot implements Elections {
 
@@ -40,7 +32,7 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 
 		if (!leader) {
 			Friend me = new Friend(this);
-			TeamComp.friends.add(me);
+			//TeamComp.getInstance().addd(me);
 		}
 
 		for (EnemyBot em : EnemyMap.EnemyMap) {
@@ -150,6 +142,7 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 		HashMap<String, TeamRobot> team;
 
 		EnemyMap.EnemyMap = new HashSet<EnemyBot>();
+		EnemyMap.FriendlyMap = new HashSet<EnemyBot>();
 
 		do {
 			execute();

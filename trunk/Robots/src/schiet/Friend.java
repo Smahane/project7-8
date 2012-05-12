@@ -17,4 +17,8 @@ public class Friend {
 		this.loc = new Point2D.Double(r.getX(), r.getY());
 	}
 	
+	public Friend(String bla) {
+		this.name = bla;
+	}
+	
 }
