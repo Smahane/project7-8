@@ -30,11 +30,12 @@ public class IgniteBot extends TeamRobot implements Elections{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-
+		
 		setAdjustGunForRobotTurn(true);
 		setAdjustRadarForGunTurn(true);
 
 		while (true) {
+
 			ahead(50);
 			turnRadarRightRadians(Double.POSITIVE_INFINITY);
 		}
@@ -49,34 +50,17 @@ public class IgniteBot extends TeamRobot implements Elections{
 
 			target = ev.getName();
 		}
-		if (e.getMessage() instanceof Point) {
-			Point p = (Point) e.getMessage();
-			// Calculate x and y to target
-			double dx = p.getX() - this.getX();
-			double dy = p.getY() - this.getY();
-			// Calculate angle to target
-			double theta = Math.toDegrees(Math.atan2(dx, dy));
-			double radarTurn = Utils.normalRelativeAngle(theta
-					- getRadarHeadingRadians());
-
-			double extraTurn = Math.min(Math.atan(36.0 / 40),
-					Rules.RADAR_TURN_RATE_RADIANS);
-			radarTurn += (radarTurn < 0 ? -extraTurn : extraTurn);
-			out.println(radarTurn);
-
-			// Turn gun to target
-			turnRadarRight(normalRelativeAngleDegrees(theta - getGunHeading()));
-			turnGunRight(normalRelativeAngleDegrees(theta - getGunHeading()));
-			// Fire hard!
-			fire(3);
-		} // Set our colors
 	}
 
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
 
+		out.println("banaan");
+		
+		Friend me = new Friend(this);
+		TeamComp.friends.add(me);
+		
 		if(isTeammate(e.getName())) {
-			out.println("return");
 			return;
 		}
 		

@@ -9,10 +9,10 @@ public class EnergyCompare implements Comparator<Friend> {
 		// TODO Auto-generated method stub
 
 		if (arg0.energy < arg1.energy) {
-			return 1;
+			return -1;
 		}
 		if (arg0.energy > arg1.energy) {
-			return -1;
+			return 1;
 		}
 
 		return 0;
