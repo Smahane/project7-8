@@ -2,14 +2,19 @@ package schiet;
 
 import java.awt.geom.Point2D;
 
+import robocode.TeamRobot;
+
 public class Friend {
 
-	public static String name;
+	private TeamRobot me;
+	public String name;
 	public double energy;
 	public Point2D.Double loc;
 	
-	public void update(double energy, Point2D.Double locatie) {
-		this.energy = energy;
-		this.loc = locatie;
+	public Friend(TeamRobot r) {
+		this.name = r.getName();
+		this.energy = r.getEnergy();
+		this.loc = new Point2D.Double(r.getX(), r.getY());
 	}
+	
 }

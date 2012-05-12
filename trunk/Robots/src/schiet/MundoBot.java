@@ -1,6 +1,7 @@
 package schiet;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 
 import robocode.GunTurnCompleteCondition;
 import robocode.HitByBulletEvent;
@@ -15,7 +16,7 @@ import robocode.util.Utils;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
-public class MundoBot extends TeamRobot implements Elections{
+public class MundoBot extends TeamRobot implements Elections {
 
 	public static double energy = 100.0;
 	private static Targeting targeting;
@@ -33,6 +34,7 @@ public class MundoBot extends TeamRobot implements Elections{
 		setAdjustRadarForGunTurn(true);
 
 		while (true) {
+
 			turnRadarRightRadians(Double.POSITIVE_INFINITY);
 		}
 
@@ -48,37 +50,18 @@ public class MundoBot extends TeamRobot implements Elections{
 				target = ev.getName();
 			}
 		}
-		if (e.getMessage() instanceof Point) {
-			Point p = (Point) e.getMessage();
-			// Calculate x and y to target
-			double dx = p.getX() - this.getX();
-			double dy = p.getY() - this.getY();
-			// Calculate angle to target
-			double theta = Math.toDegrees(Math.atan2(dx, dy));
-			double radarTurn = Utils.normalRelativeAngle(theta
-					- getRadarHeadingRadians());
-
-			double extraTurn = Math.min(Math.atan(36.0 / 40),
-					Rules.RADAR_TURN_RATE_RADIANS);
-			radarTurn += (radarTurn < 0 ? -extraTurn : extraTurn);
-			out.println(radarTurn);
-
-			// Turn gun to target
-			turnRadarRight(normalRelativeAngleDegrees(theta - getGunHeading()));
-			turnGunRight(normalRelativeAngleDegrees(theta - getGunHeading()));
-			// Fire hard!
-			fire(3);
-		} // Set our colors
 	}
 
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
 
-		if(isTeammate(e.getName())) {
-			out.println("return");
+		Friend me = new Friend(this);
+		TeamComp.friends.add(me);
+
+		if (isTeammate(e.getName())) {
 			return;
 		}
-		
+
 		targeting.onScannedRobot(e);
 
 	}
@@ -111,7 +94,7 @@ public class MundoBot extends TeamRobot implements Elections{
 	@Override
 	public void setLeader(boolean isLeader) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
