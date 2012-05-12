@@ -17,7 +17,7 @@ import robocode.util.Utils;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
-public class IgniteBot extends TeamRobot implements Elections{
+public class IgniteBot extends TeamRobot implements Elections {
 
 	private static double energy = 100.0;
 	private static Targeting targeting;
@@ -30,7 +30,7 @@ public class IgniteBot extends TeamRobot implements Elections{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		
+
 		setAdjustGunForRobotTurn(true);
 		setAdjustRadarForGunTurn(true);
 
@@ -56,14 +56,17 @@ public class IgniteBot extends TeamRobot implements Elections{
 	public void onScannedRobot(ScannedRobotEvent e) {
 
 		out.println("banaan");
-		
-		Friend me = new Friend(this);
-		TeamComp.friends.add(me);
-		
-		if(isTeammate(e.getName())) {
+
+		EnemyMap.getInstance().FriendlyMap.add(new EnemyBot(e));
+		//EnemyMap.FriendlyMap.add(new EnemyBot(e));
+		//TeamComp.getInstance().addd(new Friend(this));
+		// Friend me = new Friend(this);
+
+
+		if (isTeammate(e.getName())) {
 			return;
 		}
-		
+
 		targeting.onScannedRobot(e);
 
 	}
@@ -92,7 +95,7 @@ public class IgniteBot extends TeamRobot implements Elections{
 	@Override
 	public void setLeader(boolean isLeader) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
