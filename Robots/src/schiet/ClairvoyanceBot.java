@@ -37,10 +37,10 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 		// TODO Auto-generated method stub
 
 		out.println(friendlyMap.size());
-		
+
 		if (!leader) {
 			Friend me = new Friend(this);
-			//TeamComp.getInstance().addd(me);
+			// TeamComp.getInstance().addd(me);
 		}
 
 		for (EnemyBot em : enemyMap.enemyMap) {
@@ -78,7 +78,7 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 			setTurnRadarLeft(getRadarTurnRemaining());
 		}
 
-		//out.println(tmp.getName() + " is victim");
+		// out.println(tmp.getName() + " is victim");
 
 		// Don't fire on teammates
 		if (isTeammate(e.getName())) {
@@ -148,8 +148,28 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 		// super.run()
 		enemyMap = (EnemyMap) EnemyMap.getInstance();
 		friendlyMap = (FriendlyMap) FriendlyMap.getInstance();
-		
-		System.out.println(friendlyMap);
+
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					broadcastMessage(new Friend(ClairvoyanceBot.this));
+					Thread.sleep(100);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+		});
+
+		t.start();
 
 		do {
 			execute();
@@ -204,7 +224,7 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 
 	@Override
 	public void onDeath(DeathEvent event) {
-		
+
 	}
 
 }

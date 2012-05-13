@@ -19,7 +19,7 @@ public class EnemyMap implements Enemyintf {
 	public TreeSet<Friend> tree = null;
 
 	private static Comparator<Friend> comparator = null;
-	private static Vector<EnemyBot> enemyMap = new Vector<EnemyBot>();
+	public static Vector<EnemyBot> enemyMap = new Vector<EnemyBot>();
 
 	/**
 	 * This is effectively an instance of this class (although actually it may
