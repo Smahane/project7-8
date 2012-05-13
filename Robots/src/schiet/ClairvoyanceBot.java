@@ -5,9 +5,12 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+
+import data.EnemyBot;
+import data.EnemyMap;
+import data.Friend;
+import data.FriendlyMap;
 
 import robocode.BulletHitEvent;
 import robocode.DeathEvent;
@@ -23,19 +26,24 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 	double bearingInDegrees = 0;
 	private int radarDirection = 1;
 	private static double energy = 100.0;
+	private EnemyMap enemyMap;
+	private FriendlyMap friendlyMap;
 	Point2D emloc = null;
 	boolean leader = true;
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
 		// TODO Auto-generated method stub
 
+		out.println(friendlyMap.size());
+		
 		if (!leader) {
 			Friend me = new Friend(this);
 			//TeamComp.getInstance().addd(me);
 		}
 
-		for (EnemyBot em : EnemyMap.EnemyMap) {
+		for (EnemyBot em : enemyMap.enemyMap) {
 			if (em.getName().equals(e.getName())) {
 				double cur_power = em.getEnergy() - e.getEnergy();
 
@@ -47,14 +55,14 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 		}
 
 		EnemyBot tmp = new EnemyBot(e);
-		for (EnemyBot em : EnemyMap.EnemyMap) {
+		for (EnemyBot em : enemyMap.enemyMap) {
 			if (em.getEnergy() < tmp.getEnergy()) {
 				tmp = em;
 			}
 		}
 
 		int check = 0;
-		for (EnemyBot em : EnemyMap.EnemyMap) {
+		for (EnemyBot em : enemyMap.enemyMap) {
 			if (e.getName().equals(em.getName())) {
 				em.update(e);
 				check = 1;
@@ -62,15 +70,15 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 		}
 
 		if (check == 0 && !(isTeammate(e.getName()))) {
-			EnemyMap.EnemyMap.add(new EnemyBot(e));
+			enemyMap.enemyMap.add(new EnemyBot(e));
 		}
 
-		if (EnemyMap.EnemyMap.size() >= getOthers()) {
-			EnemyMap.EnemyMap.clear();
+		if (enemyMap.enemyMap.size() >= getOthers()) {
+			enemyMap.enemyMap.clear();
 			setTurnRadarLeft(getRadarTurnRemaining());
 		}
 
-		// out.println(tmp.getName() + " is victim");
+		//out.println(tmp.getName() + " is victim");
 
 		// Don't fire on teammates
 		if (isTeammate(e.getName())) {
@@ -120,7 +128,7 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 	public void onRobotDeath(RobotDeathEvent event) {
 		// out.println(event.getName());
 
-		Iterator<EnemyBot> itr = EnemyMap.EnemyMap.iterator();
+		Iterator<EnemyBot> itr = enemyMap.enemyMap.iterator();
 		while (itr.hasNext()) {
 			EnemyBot tmp = (EnemyBot) itr.next();
 
@@ -138,16 +146,13 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 	public void run() {
 		// TODO Auto-generated method stub
 		// super.run()
-
-		HashMap<String, TeamRobot> team;
-
-		EnemyMap.EnemyMap = new HashSet<EnemyBot>();
-		EnemyMap.FriendlyMap = new HashSet<EnemyBot>();
+		enemyMap = (EnemyMap) EnemyMap.getInstance();
+		friendlyMap = (FriendlyMap) FriendlyMap.getInstance();
+		
+		System.out.println(friendlyMap);
 
 		do {
 			execute();
-
-			System.out.println(EnemyMap.EnemyMap.size());
 
 			ahead(50);
 			turnRadarRightRadians(Double.POSITIVE_INFINITY);
@@ -199,7 +204,7 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 
 	@Override
 	public void onDeath(DeathEvent event) {
-		TeamComp.elect();
+		
 	}
 
 }
