@@ -1,4 +1,4 @@
-package schiet;
+package data;
 
 import robocode.ScannedRobotEvent;
 

@@ -3,6 +3,9 @@ package schiet;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 
+import data.EnemyBot;
+import data.FriendlyMap;
+
 import robocode.GunTurnCompleteCondition;
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
@@ -21,6 +24,7 @@ public class MundoBot extends TeamRobot implements Elections {
 	public static double energy = 100.0;
 	private static Targeting targeting;
 	private String target;
+	private FriendlyMap friendlyMap;
 
 	public MundoBot() {
 		targeting = new Targeting(this);
@@ -30,6 +34,8 @@ public class MundoBot extends TeamRobot implements Elections {
 	public void run() {
 		// TODO Auto-generated method stub
 
+		friendlyMap = (FriendlyMap) FriendlyMap.getInstance();
+		
 		setAdjustGunForRobotTurn(true);
 		setAdjustRadarForGunTurn(true);
 
@@ -55,8 +61,9 @@ public class MundoBot extends TeamRobot implements Elections {
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
 
-		Friend me = new Friend(this);
-		TeamComp.friends.add(me);
+		friendlyMap.log(this);
+		System.out.println(friendlyMap.size());
+		//FriendlyMap.getInstance().log(this);
 
 		if (isTeammate(e.getName())) {
 			return;
