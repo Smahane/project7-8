@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 
 import data.EnemyBot;
+import data.Friend;
 import data.FriendlyMap;
 
 import robocode.AdvancedRobot;
@@ -55,6 +56,10 @@ public class IgniteBot extends TeamRobot implements Elections {
 			EnemyBot ev = (EnemyBot) e.getMessage();
 
 			target = ev.getName();
+		}
+		
+		if (e.getMessage() instanceof Friend) {
+			Friend friend = (Friend) e.getMessage();
 		}
 	}
 

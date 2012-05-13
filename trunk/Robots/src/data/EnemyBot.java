@@ -31,7 +31,7 @@ public class EnemyBot implements java.io.Serializable {
 		this.bearingRadians = e.getBearingRadians();
 	}
 
-	void update(ScannedRobotEvent e) {
+	public void update(ScannedRobotEvent e) {
 		this.bearing = e.getBearing();
 		this.distance = e.getDistance();
 		this.energy = e.getEnergy();
