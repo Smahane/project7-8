@@ -1,6 +1,8 @@
 package com.sommelsdijk.project;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -21,11 +23,20 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.PopupMenu;
 import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.location.Criteria;
@@ -57,10 +68,13 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private float longtitude;
 	private float latitude;
 	private boolean showingTrustedLocations;
+	private boolean showingSearchBar;
 	private SeekBar seekBar;
+	private EditText autoCompleteText;
 	private float radius;
 	private boolean ShowSeekBar;
 	private int CircleLocationInMapView;
+	private Geocoder gc;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -75,11 +89,12 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		internal = false;
 		getHomeLocation();
 
+		/*
 		this.startService(new Intent(PatientLocationTrackerActivity.this,
 				positionReceiver.class));
 		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
 		positionReceiver.setExtern(internal);
-
+	*/
 		// Creates a fake location in the DB;
 		// new dbSchrijf("project78", "sommelsdijk", true).execute(
 		// "TrustedLocations", devNaam, "" + 50.f, "" + 50f);
@@ -132,8 +147,48 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				}
 			}
 		});
+		autoCompleteText.setOnEditorActionListener(new EditText.OnEditorActionListener(){
+		
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				if(event.getKeyCode() == 66){
+					String searchAddress = v.getText().toString();
+					v.setText("");
+					v.setVisibility(View.GONE);
+					showingSearchBar = false;
+					// Zorgt ervoor dat het Keyboard Uitgaat als de gebruiker op enter drukt in de EditText!!
+					InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+					
+					try {
+						List<Address> searchResults = gc.getFromLocationName(searchAddress, 5);
+						System.out.println(searchResults);
+						
+						int searchLatitude = (int) (searchResults.get(0).getLatitude() * 1E6);
+						int searchLongitude = (int) (searchResults.get(0).getLongitude() * 1E6);
+						
+						System.out.println(searchLatitude + " " + searchLongitude);
+						GeoPoint gp = new GeoPoint(searchLatitude , searchLongitude);
+						
+						//mapController.animateTo(gp);
+						mapController.setCenter(gp);
+					
+						
+						
+					} catch (IOException e) {
+						Log.i(searchAddress, "Address Not Found Exception!");
+						e.printStackTrace();
+					}
+					
+				}
+				
+				return false;
+			}
+			
+		});
 
 	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -171,6 +226,16 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		case R.id.ForceUpdate:
 			mlocManager.requestSingleUpdate(mlocManager.GPS_PROVIDER,
 					mlocListener, null);
+			break;
+			
+		case R.id.ManualTrustedLoc:
+			if(!showingSearchBar){
+			autoCompleteText.setVisibility(1);
+			showingSearchBar = true;
+			}else{
+			autoCompleteText.setVisibility(View.GONE);
+			showingSearchBar = false;
+			}
 			break;
 		}
 		return true;
@@ -282,7 +347,11 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		homeOverlay = new MyOverlays(this, homeDrawable, internal);
 		seekBar = (SeekBar) findViewById(R.id.seekbar);
 		seekBar.setVisibility(View.GONE);
+		autoCompleteText = (EditText) findViewById(R.id.autoCompleteTextView1);
+		autoCompleteText.setVisibility(View.GONE);
 		radius = 100;
+		gc = new Geocoder(getApplicationContext(),
+				Locale.getDefault());
 
 	}
 
@@ -371,9 +440,6 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 			createMarker(gp);
 			mapController.animateTo(gp);
-
-			Geocoder gc = new Geocoder(getApplicationContext(),
-					Locale.getDefault());
 
 			List<Address> addresses = gc
 					.getFromLocation(location.getLatitude(),
