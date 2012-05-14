@@ -1,8 +1,6 @@
 package com.sommelsdijk.project;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -14,7 +12,6 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.OverlayItem;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -29,14 +26,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.PopupMenu;
 import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.location.Criteria;
@@ -160,25 +151,9 @@ public class PatientLocationTrackerActivity extends MapActivity {
 					InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 					
-					try {
-						List<Address> searchResults = gc.getFromLocationName(searchAddress, 5);
-						System.out.println(searchResults);
-						
-						int searchLatitude = (int) (searchResults.get(0).getLatitude() * 1E6);
-						int searchLongitude = (int) (searchResults.get(0).getLongitude() * 1E6);
-						
-						System.out.println(searchLatitude + " " + searchLongitude);
-						GeoPoint gp = new GeoPoint(searchLatitude , searchLongitude);
-						
-						//mapController.animateTo(gp);
-						mapController.setCenter(gp);
 					
-						
-						
-					} catch (IOException e) {
-						Log.i(searchAddress, "Address Not Found Exception!");
-						e.printStackTrace();
-					}
+					searchToLocation(searchAddress);
+
 					
 				}
 				
@@ -187,6 +162,32 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			
 		});
 
+	}
+	
+	private void searchToLocation(String l){
+		try {
+			List<Address> searchResults = gc.getFromLocationName(l, 5);
+			System.out.println(searchResults);
+			
+			
+			if(!searchResults.isEmpty()){
+			int searchLatitude = (int) (searchResults.get(0).getLatitude() * 1E6);
+			int searchLongitude = (int) (searchResults.get(0).getLongitude() * 1E6);
+			
+			System.out.println(searchLatitude + " GHALLO " + searchLongitude);
+			GeoPoint gp = new GeoPoint(searchLatitude , searchLongitude);
+			
+			//mapController.animateTo(gp);
+			mapController.setCenter(gp);
+			}else{
+				locationTV.setText("Straatnaam niet gevonden");
+			}
+			
+			
+		} catch (IOException e) {
+			Log.i(l, "Address Not Found Exception!");
+			e.printStackTrace();
+		}
 	}
 	
 
