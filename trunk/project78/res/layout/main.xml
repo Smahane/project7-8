@@ -12,6 +12,15 @@
         android:max="100"
         android:progress="50" />
 
+    <EditText
+        android:id="@+id/autoCompleteTextView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPostalAddress" >
+
+        <requestFocus />
+    </EditText>
+
     <TextView
         android:id="@+id/tvLocation"
         android:layout_width="fill_parent"
