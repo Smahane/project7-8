@@ -11,7 +11,12 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.OverlayItem;
+
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -66,6 +71,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private boolean ShowSeekBar;
 	private int CircleLocationInMapView;
 	private Geocoder gc;
+	private AlertDialog results;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -77,15 +83,14 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		Log.d("devNaam", "" + devNaam);
 
 		// Gets home location from the database;
-		internal = false;
+		internal = true;
 		getHomeLocation();
 
 		/*
-		this.startService(new Intent(PatientLocationTrackerActivity.this,
-				positionReceiver.class));
-		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
-		positionReceiver.setExtern(internal);
-	*/
+		 * this.startService(new Intent(PatientLocationTrackerActivity.this,
+		 * positionReceiver.class)); positionReceiver.setMinTimeMillis((2 * 60 *
+		 * 1000)); positionReceiver.setExtern(internal);
+		 */
 		// Creates a fake location in the DB;
 		// new dbSchrijf("project78", "sommelsdijk", true).execute(
 		// "TrustedLocations", devNaam, "" + 50.f, "" + 50f);
@@ -107,11 +112,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				1000000, 0, mlocListener);
 
 		/*
-		 * De SeekBar listener 
-		 * Progress is hoever de schuiver staat. 
-		 * Radius is de radius van de cirkel die we willen tekenen 
-		 * Eerst deleten we alle bestaande overlays, om ze vervolgens opnieuw te tekenen 
-		 * Inclusief de nieuwe HomeCirkel
+		 * De SeekBar listener Progress is hoever de schuiver staat. Radius is
+		 * de radius van de cirkel die we willen tekenen Eerst deleten we alle
+		 * bestaande overlays, om ze vervolgens opnieuw te tekenen Inclusief de
+		 * nieuwe HomeCirkel
 		 */
 		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			int progress = 0;
@@ -138,58 +142,80 @@ public class PatientLocationTrackerActivity extends MapActivity {
 				}
 			}
 		});
-		autoCompleteText.setOnEditorActionListener(new EditText.OnEditorActionListener(){
-		
-			public boolean onEditorAction(TextView v, int actionId,
-					KeyEvent event) {
-				if(event.getKeyCode() == 66){
-					String searchAddress = v.getText().toString();
-					v.setText("");
-					v.setVisibility(View.GONE);
-					showingSearchBar = false;
-					// Zorgt ervoor dat het Keyboard Uitgaat als de gebruiker op enter drukt in de EditText!!
-					InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-					
-					
-					searchToLocation(searchAddress);
 
-					
-				}
-				
-				return false;
-			}
-			
-		});
+		autoCompleteText
+				.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+
+					public boolean onEditorAction(TextView v, int actionId,
+							KeyEvent event) {
+						if (event != null) {
+							if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+								String searchAddress = v.getText().toString();
+								v.setText("");
+								v.setVisibility(View.GONE);
+								showingSearchBar = false;
+								// Zorgt ervoor dat het Keyboard Uitgaat als de
+								// gebruiker op enter drukt in de EditText!!
+								InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+								imm.hideSoftInputFromWindow(v.getWindowToken(),
+										0);
+
+								searchToLocation(searchAddress);
+
+							}
+
+						}
+						return false;
+					}
+				});
 
 	}
-	
-	private void searchToLocation(String l){
+
+	private void searchToLocation(String l) {
 		try {
 			List<Address> searchResults = gc.getFromLocationName(l, 5);
 			System.out.println(searchResults);
-			
-			
-			if(!searchResults.isEmpty()){
-			int searchLatitude = (int) (searchResults.get(0).getLatitude() * 1E6);
-			int searchLongitude = (int) (searchResults.get(0).getLongitude() * 1E6);
-			
-			System.out.println(searchLatitude + " GHALLO " + searchLongitude);
-			GeoPoint gp = new GeoPoint(searchLatitude , searchLongitude);
-			
-			//mapController.animateTo(gp);
-			mapController.setCenter(gp);
-			}else{
+
+			if (!searchResults.isEmpty()) {
+				int searchLatitude = (int) (searchResults.get(0).getLatitude() * 1E6);
+				int searchLongitude = (int) (searchResults.get(0)
+						.getLongitude() * 1E6);
+
+				Builder build = new Builder(this);
+				build.setTitle("List selection");
+				build.setCancelable(true);
+				final String[] result = new String[searchResults.size()];
+				for(int i = 0 ; i < searchResults.size(); i++) {
+					String temp = searchResults.get(i).toString();
+					result[i] = temp;
+				}
+
+				final OnMultiChoiceClickListener onClick = new OnMultiChoiceClickListener() {
+					public void onClick(final DialogInterface dialog,
+							final int which, final boolean isChecked) {
+
+					}
+				};
+				build.setMultiChoiceItems(result, null, onClick);
+
+				build.show();
+
+				System.out.println(searchLatitude + " GHALLO "
+						+ searchLongitude);
+				GeoPoint gp = new GeoPoint(searchLatitude, searchLongitude);
+
+				// mapController.animateTo(gp);
+				mapController.setCenter(gp);
+			} else {
 				locationTV.setText("Straatnaam niet gevonden");
 			}
-			
-			
+
 		} catch (IOException e) {
 			Log.i(l, "Address Not Found Exception!");
 			e.printStackTrace();
 		}
 	}
-	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -228,14 +254,14 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			mlocManager.requestSingleUpdate(mlocManager.GPS_PROVIDER,
 					mlocListener, null);
 			break;
-			
+
 		case R.id.ManualTrustedLoc:
-			if(!showingSearchBar){
-			autoCompleteText.setVisibility(1);
-			showingSearchBar = true;
-			}else{
-			autoCompleteText.setVisibility(View.GONE);
-			showingSearchBar = false;
+			if (!showingSearchBar) {
+				autoCompleteText.setVisibility(1);
+				showingSearchBar = true;
+			} else {
+				autoCompleteText.setVisibility(View.GONE);
+				showingSearchBar = false;
 			}
 			break;
 		}
@@ -351,8 +377,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		autoCompleteText = (EditText) findViewById(R.id.autoCompleteTextView1);
 		autoCompleteText.setVisibility(View.GONE);
 		radius = 100;
-		gc = new Geocoder(getApplicationContext(),
-				Locale.getDefault());
+		gc = new Geocoder(getApplicationContext(), Locale.getDefault());
 
 	}
 
