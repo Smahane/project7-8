@@ -174,39 +174,36 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 	private void searchToLocation(String l) {
 		try {
-			List<Address> searchResults = gc.getFromLocationName(l, 5);
-			System.out.println(searchResults);
+			final List<Address> searchResults = gc.getFromLocationName(l, 5);
+			System.out.println(searchResults.size());
 
 			if (!searchResults.isEmpty()) {
-				int searchLatitude = (int) (searchResults.get(0).getLatitude() * 1E6);
-				int searchLongitude = (int) (searchResults.get(0)
-						.getLongitude() * 1E6);
-
+		
 				Builder build = new Builder(this);
 				build.setTitle("List selection");
 				build.setCancelable(true);
 				final String[] result = new String[searchResults.size()];
 				for(int i = 0 ; i < searchResults.size(); i++) {
-					String temp = searchResults.get(i).toString();
+					String temp = searchResults.get(i).getAddressLine(0) + " " + searchResults.get(i).getAddressLine(1);
 					result[i] = temp;
 				}
 
 				final OnMultiChoiceClickListener onClick = new OnMultiChoiceClickListener() {
 					public void onClick(final DialogInterface dialog,
 							final int which, final boolean isChecked) {
-
+						if(isChecked) {
+							Log.i(tag, result[which]);
+							GeoPoint gp = new GeoPoint((int) (searchResults.get(which).getLatitude() * 1E6), (int) (searchResults.get(which).getLatitude() * 1E6));
+						
+							mapController.animateTo(gp);
+							
+						}
 					}
 				};
 				build.setMultiChoiceItems(result, null, onClick);
 
 				build.show();
 
-				System.out.println(searchLatitude + " GHALLO "
-						+ searchLongitude);
-				GeoPoint gp = new GeoPoint(searchLatitude, searchLongitude);
-
-				// mapController.animateTo(gp);
-				mapController.setCenter(gp);
 			} else {
 				locationTV.setText("Straatnaam niet gevonden");
 			}
