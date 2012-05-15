@@ -11,7 +11,7 @@
         android:icon="@drawable/force_update"
         android:title="Force Update" />
         <item android:id="@+id/ManualTrustedLoc" 
-        android:icon="@drawable/force_update"
+        android:icon="@drawable/addtrusted"
         android:title="Add TrustedLoc" />
 
 
