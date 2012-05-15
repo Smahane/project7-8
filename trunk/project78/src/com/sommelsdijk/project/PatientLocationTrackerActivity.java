@@ -175,31 +175,84 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	private void searchToLocation(String l) {
 		try {
 			final List<Address> searchResults = gc.getFromLocationName(l, 5);
-			System.out.println(searchResults.size());
 
 			if (!searchResults.isEmpty()) {
-		
+
 				Builder build = new Builder(this);
-				build.setTitle("List selection");
+				build.setTitle("Results");
 				build.setCancelable(true);
 				final String[] result = new String[searchResults.size()];
-				for(int i = 0 ; i < searchResults.size(); i++) {
-					String temp = searchResults.get(i).getAddressLine(0) + " " + searchResults.get(i).getAddressLine(1);
+				for (int i = 0; i < searchResults.size(); i++) {
+					String temp = searchResults.get(i).getAddressLine(0) + " "
+							+ searchResults.get(i).getAddressLine(1);
 					result[i] = temp;
 				}
 
 				final OnMultiChoiceClickListener onClick = new OnMultiChoiceClickListener() {
 					public void onClick(final DialogInterface dialog,
 							final int which, final boolean isChecked) {
-						if(isChecked) {
+						if (isChecked) {
+
 							Log.i(tag, result[which]);
-							GeoPoint gp = new GeoPoint((int) (searchResults.get(which).getLatitude() * 1E6), (int) (searchResults.get(which).getLatitude() * 1E6));
-						
-							mapController.animateTo(gp);
-							
+							int searchLatitude = (int) (searchResults
+									.get(which).getLatitude() * 1E6);
+							int searchLongtitude = (int) (searchResults.get(
+									which).getLongitude() * 1E6);
+
+							GeoPoint gp = new GeoPoint(searchLatitude,
+									searchLongtitude);
+
+							mapController.setCenter(gp);
+
+							final AlertDialog builde = new AlertDialog.Builder(
+									PatientLocationTrackerActivity.this)
+									.create();
+							builde.setTitle("Suuuuuure? :)");
+							builde.setMessage("Wilt u deze locatie toevoegen?");
+							builde.setCancelable(true);
+							builde.setCanceledOnTouchOutside(false);
+
+							builde.setButton("Cancel",
+									new DialogInterface.OnClickListener() {
+
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											builde.dismiss();
+										}
+									});
+
+							builde.setButton2("OK!",
+									new DialogInterface.OnClickListener() {
+
+										public void onClick(
+												DialogInterface dialog, int whic) {
+
+											double lat = (searchResults
+													.get(which).getLatitude());
+											double lng = (searchResults
+													.get(which).getLongitude());
+
+											new dbSchrijf("project78",
+													"sommelsdijk", internal)
+													.execute(
+															"TrustedLocations",
+															devNaam, "" + lat,
+															"" + lng);
+											
+											mlocManager.requestSingleUpdate(
+													mlocManager.GPS_PROVIDER,
+													mlocListener, null);
+										}
+
+									});
+
+							builde.show();
+
 						}
 					}
 				};
+
 				build.setMultiChoiceItems(result, null, onClick);
 
 				build.show();
@@ -374,7 +427,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		autoCompleteText = (EditText) findViewById(R.id.autoCompleteTextView1);
 		autoCompleteText.setVisibility(View.GONE);
 		radius = 100;
-		gc = new Geocoder(getApplicationContext(), Locale.getDefault());
+		gc = new Geocoder(this, Locale.getDefault());
 
 	}
 
