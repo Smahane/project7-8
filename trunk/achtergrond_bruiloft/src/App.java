@@ -87,7 +87,7 @@ class CustomComponent extends JComponent {
 
 			for (int i = start; i < dim.width; i = i + 50) {
 				// System.out.println(i);
-				Shape dot = new Ellipse2D.Float(i, j, 5, 5);
+				Shape dot = new Ellipse2D.Float(i, j, 6, 6);
 				g2.draw(dot);
 				g2.fill(dot);
 				// g.drawLine(i, 100, i, 100);
