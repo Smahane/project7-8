@@ -70,6 +70,7 @@ public class KnownOverlays extends ItemizedOverlay<OverlayItem> {
 
 	public void Builder() {
 		devNaam = android.os.Build.MODEL;
+		devNaam = devNaam.replaceAll(" ", "");
 		Builder builder = new AlertDialog.Builder(context);
 		builder.setMessage("De vertrouwde locatie verwijderen?");
 		builder.setCancelable(true);

@@ -73,6 +73,7 @@ public class MyOverlays extends ItemizedOverlay<OverlayItem> {
 
 	public void Builder() {
 		devNaam = android.os.Build.MODEL;
+		devNaam = devNaam.replaceAll(" ", "");
 		Builder builder = new AlertDialog.Builder(context);
 		if (currentAddress != null) {
 			builder.setMessage("Is " + currentAddress.getAddressLine(0)
