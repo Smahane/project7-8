@@ -80,6 +80,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		setContentView(R.layout.main);
 
 		devNaam = android.os.Build.MODEL;
+		devNaam = devNaam.replaceAll(" ", "");
 		Log.d("devNaam", "" + devNaam);
 
 		// Gets home location from the database;
@@ -326,9 +327,9 @@ public class PatientLocationTrackerActivity extends MapActivity {
 						.get();
 				try {
 					String[] tmp = getHomeResultSet.split(" ");
-					homeLatitude = Float.parseFloat(tmp[2]);
-					homeLongitude = Float.parseFloat(tmp[3]);
-
+					homeLatitude = Float.parseFloat(tmp[1]);
+					homeLongitude = Float.parseFloat(tmp[2]);
+					
 				} catch (Exception e) {
 					Toast.makeText(this, "Thuis adres niet gevonden!",
 							Toast.LENGTH_LONG).show();

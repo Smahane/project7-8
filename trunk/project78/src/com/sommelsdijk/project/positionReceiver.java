@@ -64,6 +64,7 @@ public class positionReceiver extends Service {
 		schrijfdb.setInternal(true);
 
 		devNaam = android.os.Build.MODEL;
+		devNaam = devNaam.replaceAll(" ", "");
 
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
 				minDistanceMeters, locationListener);
