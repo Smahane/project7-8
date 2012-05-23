@@ -17,6 +17,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -87,11 +88,11 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		internal = true;
 		getHomeLocation();
 
-		/*
-		 * this.startService(new Intent(PatientLocationTrackerActivity.this,
-		 * positionReceiver.class)); positionReceiver.setMinTimeMillis((2 * 60 *
-		 * 1000)); positionReceiver.setExtern(internal);
-		 */
+		this.startService(new Intent(PatientLocationTrackerActivity.this,
+				positionReceiver.class));
+		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
+		positionReceiver.setExtern(internal);
+
 		// Creates a fake location in the DB;
 		// new dbSchrijf("project78", "sommelsdijk", true).execute(
 		// "TrustedLocations", devNaam, "" + 50.f, "" + 50f);
@@ -240,7 +241,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 															"TrustedLocations",
 															devNaam, "" + lat,
 															"" + lng);
-											
+
 											mlocManager.requestSingleUpdate(
 													mlocManager.GPS_PROVIDER,
 													mlocListener, null);
@@ -329,7 +330,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 					String[] tmp = getHomeResultSet.split(" ");
 					homeLatitude = Float.parseFloat(tmp[1]);
 					homeLongitude = Float.parseFloat(tmp[2]);
-					
+
 				} catch (Exception e) {
 					Toast.makeText(this, "Thuis adres niet gevonden!",
 							Toast.LENGTH_LONG).show();

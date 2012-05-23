@@ -59,12 +59,11 @@ public class positionReceiver extends Service {
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 		locationListener = new MyLocationListener();
-		schrijfdb = new dbSchrijf("project78",
-				"sommelsdijk");
-		schrijfdb.setInternal(true);
 
 		devNaam = android.os.Build.MODEL;
 		devNaam = devNaam.replaceAll(" ", "");
+		
+		new dbSchrijf("project78", "sommelsdijk", extern).execute("table", devNaam);
 
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
 				minDistanceMeters, locationListener);
