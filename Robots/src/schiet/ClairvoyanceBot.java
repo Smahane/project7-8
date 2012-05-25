@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -23,7 +24,7 @@ import robocode.Rules;
 import robocode.ScannedRobotEvent;
 import robocode.TeamRobot;
 
-public class ClairvoyanceBot extends TeamRobot implements Elections {
+public class ClairvoyanceBot extends TeamRobot implements IntfElections {
 
 	double bearingInDegrees = 0;
 	private int radarDirection = 1;
@@ -37,8 +38,6 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
 		// TODO Auto-generated method stub
-
-		//out.println(friendlyMap.size());
 
 		/*
 		if (!leader) {
@@ -148,17 +147,23 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		// super.run()
+		super.run();
 		//enemyMap = (EnemyMap) EnemyMap.getInstance();
 		//friendlyMap = (FriendlyMap) FriendlyMap.getInstance();
 		
 		do {
-			out.println("hoi");
+
 			execute();
 
-			ahead(50);
-			turnRadarRightRadians(Double.POSITIVE_INFINITY);
-
+			setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+			
+			try {
+				broadcastMessage(new Friend(this, isLeader));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		} while (true);
 
 	}
@@ -206,7 +211,15 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 
 	@Override
 	public void onDeath(DeathEvent event) {
+		if(isLeader) {
+			
+		}
+	}
 
+	@Override
+	public List<Friend> getMap() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

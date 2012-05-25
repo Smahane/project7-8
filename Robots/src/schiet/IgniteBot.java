@@ -2,6 +2,8 @@ package schiet;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.util.LinkedList;
+import java.util.List;
 
 import data.EnemyBot;
 import data.Friend;
@@ -21,16 +23,18 @@ import robocode.util.Utils;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
-public class IgniteBot extends TeamRobot implements Elections {
+public class IgniteBot extends TeamRobot implements IntfElections {
 
 	private static double energy = 100.0;
 	private static Targeting targeting;
 	private String target;
 	private FriendlyMap friendlyMap;
 	private boolean isLeader = false;
+	private static List<Friend> map;
 
 	public IgniteBot() {
 		targeting = new Targeting(this);
+		map = new LinkedList<Friend>();
 	}
 
 	@Override
@@ -44,8 +48,11 @@ public class IgniteBot extends TeamRobot implements Elections {
 
 		while (true) {
 
-			ahead(50);
-			turnRadarRightRadians(Double.POSITIVE_INFINITY);
+			if(map.size() == 3) {
+				map.clear();
+			}
+			
+			setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 		}
 
 	}
@@ -62,7 +69,18 @@ public class IgniteBot extends TeamRobot implements Elections {
 		if (e.getMessage() instanceof Friend) {
 			Friend friend = (Friend) e.getMessage();
 			
-			System.out.println(friend.energy);
+			int check = 0;
+			for(Friend f : map) {
+				if(f.name.equalsIgnoreCase(friend.name)) {
+					check = 1;
+				}
+			}
+			
+			if(check == 0) {
+				map.add(friend);
+			} else {
+				
+			}
 		}
 	}
 
@@ -104,6 +122,11 @@ public class IgniteBot extends TeamRobot implements Elections {
 	public void setLeader(boolean isLeader) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public static List<Friend> getMap() {
+		// TODO Auto-generated method stub
+		return map;
 	}
 
 }
