@@ -2,8 +2,11 @@ package schiet;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.util.LinkedList;
+import java.util.List;
 
 import data.EnemyBot;
+import data.Friend;
 import data.FriendlyMap;
 
 import robocode.GunTurnCompleteCondition;
@@ -19,16 +22,18 @@ import robocode.util.Utils;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
-public class MundoBot extends TeamRobot implements Elections {
+public class MundoBot extends TeamRobot implements IntfElections {
 
 	public static double energy = 100.0;
 	private static Targeting targeting;
 	private String target;
 	private FriendlyMap friendlyMap;
 	private boolean isLeader = false;
+	public static List<Friend> map;
 
 	public MundoBot() {
 		targeting = new Targeting(this);
+		map = new LinkedList<Friend>();
 	}
 
 	@Override
@@ -101,4 +106,9 @@ public class MundoBot extends TeamRobot implements Elections {
 
 	}
 
+
+	public static List<Friend> getMap() {
+		// TODO Auto-generated method stub
+		return map;
+	}
 }
