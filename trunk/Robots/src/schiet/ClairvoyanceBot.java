@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import data.EnemyBot;
 import data.EnemyMap;
@@ -29,19 +31,20 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 	private EnemyMap enemyMap;
 	private FriendlyMap friendlyMap;
 	Point2D emloc = null;
-	boolean leader = true;
+	private boolean isLeader = true;
 
 	@SuppressWarnings("static-access")
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
 		// TODO Auto-generated method stub
 
-		out.println(friendlyMap.size());
+		//out.println(friendlyMap.size());
 
+		/*
 		if (!leader) {
 			Friend me = new Friend(this);
 			// TeamComp.getInstance().addd(me);
-		}
+		}*/
 
 		for (EnemyBot em : enemyMap.enemyMap) {
 			if (em.getName().equals(e.getName())) {
@@ -146,32 +149,11 @@ public class ClairvoyanceBot extends TeamRobot implements Elections {
 	public void run() {
 		// TODO Auto-generated method stub
 		// super.run()
-		enemyMap = (EnemyMap) EnemyMap.getInstance();
-		friendlyMap = (FriendlyMap) FriendlyMap.getInstance();
-
-		Thread t = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				try {
-					broadcastMessage(new Friend(ClairvoyanceBot.this));
-					Thread.sleep(100);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-
-		});
-
-		t.start();
-
+		//enemyMap = (EnemyMap) EnemyMap.getInstance();
+		//friendlyMap = (FriendlyMap) FriendlyMap.getInstance();
+		
 		do {
+			out.println("hoi");
 			execute();
 
 			ahead(50);

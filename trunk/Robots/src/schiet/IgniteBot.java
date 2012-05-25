@@ -27,6 +27,7 @@ public class IgniteBot extends TeamRobot implements Elections {
 	private static Targeting targeting;
 	private String target;
 	private FriendlyMap friendlyMap;
+	private boolean isLeader = false;
 
 	public IgniteBot() {
 		targeting = new Targeting(this);
@@ -36,7 +37,7 @@ public class IgniteBot extends TeamRobot implements Elections {
 	public void run() {
 		// TODO Auto-generated method stub
 
-		friendlyMap = (FriendlyMap) FriendlyMap.getInstance();
+		//friendlyMap = (FriendlyMap) FriendlyMap.getInstance();
 		
 		setAdjustGunForRobotTurn(true);
 		setAdjustRadarForGunTurn(true);
@@ -60,6 +61,8 @@ public class IgniteBot extends TeamRobot implements Elections {
 		
 		if (e.getMessage() instanceof Friend) {
 			Friend friend = (Friend) e.getMessage();
+			
+			System.out.println(friend.energy);
 		}
 	}
 
@@ -67,14 +70,6 @@ public class IgniteBot extends TeamRobot implements Elections {
 	public void onScannedRobot(ScannedRobotEvent e) {
 
 		out.println("banaan");
-
-		friendlyMap.log(this);
-		System.out.println(friendlyMap.size());
-		//FriendlyMap.getInstance().log(this);
-		//EnemyMap.FriendlyMap.add(new EnemyBot(e));
-		//TeamComp.getInstance().addd(new Friend(this));
-		// Friend me = new Friend(this);
-
 
 		if (isTeammate(e.getName())) {
 			return;

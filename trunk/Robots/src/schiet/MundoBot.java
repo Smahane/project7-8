@@ -25,6 +25,7 @@ public class MundoBot extends TeamRobot implements Elections {
 	private static Targeting targeting;
 	private String target;
 	private FriendlyMap friendlyMap;
+	private boolean isLeader = false;
 
 	public MundoBot() {
 		targeting = new Targeting(this);
@@ -34,7 +35,7 @@ public class MundoBot extends TeamRobot implements Elections {
 	public void run() {
 		// TODO Auto-generated method stub
 
-		friendlyMap = (FriendlyMap) FriendlyMap.getInstance();
+		//friendlyMap = (FriendlyMap) FriendlyMap.getInstance();
 		
 		setAdjustGunForRobotTurn(true);
 		setAdjustRadarForGunTurn(true);
@@ -60,10 +61,6 @@ public class MundoBot extends TeamRobot implements Elections {
 
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
-
-		friendlyMap.log(this);
-		System.out.println(friendlyMap.size());
-		//FriendlyMap.getInstance().log(this);
 
 		if (isTeammate(e.getName())) {
 			return;
