@@ -307,6 +307,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 					mlocListener, null);
 			break;
 
+		case R.id.getLocBejaarde: {
+			getLocBejaarde("bla");
+		}
+
 		case R.id.ManualTrustedLoc:
 			if (!showingSearchBar) {
 				autoCompleteText.setVisibility(1);
@@ -318,6 +322,19 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			break;
 		}
 		return true;
+	}
+
+	private void getLocBejaarde(String naam) {
+		try {
+			String tmp = new TcpClient().execute(naam).get();
+			Log.i("loc", tmp);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void getHomeLocation() {

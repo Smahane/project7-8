@@ -13,6 +13,7 @@
         <item android:id="@+id/ManualTrustedLoc" 
         android:icon="@drawable/addtrusted"
         android:title="Add TrustedLoc" />
+        <item android:id="@+id/getLocBejaarde" android:title="getLocBejaarde"></item>
 
 
 </menu>
