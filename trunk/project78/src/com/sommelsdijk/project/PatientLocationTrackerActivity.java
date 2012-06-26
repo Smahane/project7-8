@@ -98,7 +98,6 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		// "TrustedLocations", devNaam, "" + 50.f, "" + 50f);
 
 		// leesDb(false, "leeshome");
-
 		Initialize();
 		createHomeOverlay();
 
@@ -311,7 +310,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		case R.id.getLocBejaarde: {
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-			alert.setTitle("Title");
+			alert.setTitle("getLoc");
 			alert.setMessage("Message");
 
 			// Set an EditText view to get user input
@@ -470,7 +469,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		gc = new Geocoder(this, Locale.getDefault());
 
 	}
-
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -492,10 +491,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 		if (itemizedoverlay.size() > 0) {
 			mapView.getOverlays().add(itemizedoverlay);
-		
+
 		}
 	}
-	
+
 	public void currentPatientLocation(GeoPoint gp) {
 		OverlayItem overlayitem = new OverlayItem(gp, "", "");
 		Drawable drawable = this.getResources().getDrawable(R.drawable.pltoma);
@@ -504,10 +503,9 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 		if (patientLoc.size() > 0) {
 			mapView.getOverlays().add(patientLoc);
-		
+
 		}
 	}
-
 
 	protected static void createTrustedLocation() {
 		OverlayItem overlayitem = new OverlayItem(
@@ -517,6 +515,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		if (TrustedLocations.size() > 0) {
 			mapView.getOverlays().add(TrustedLocations);
 		}
+
 		gpForTrustedLocationsCounter++;
 	}
 
