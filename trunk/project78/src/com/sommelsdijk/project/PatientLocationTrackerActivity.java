@@ -42,7 +42,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 	static MapView mapView;
 	private final String tag = "MainActivity";
-	private MapController mapController;
+	public MapController mapController;
 	private LocationManager mlocManager;
 	private LocationListener mlocListener;
 	private MyOverlays itemizedoverlay;
@@ -88,10 +88,10 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		internal = true;
 		getHomeLocation();
 
-		this.startService(new Intent(PatientLocationTrackerActivity.this,
-				positionReceiver.class));
-		positionReceiver.setMinTimeMillis((2 * 60 * 1000));
-		positionReceiver.setExtern(internal);
+		// this.startService(new Intent(PatientLocationTrackerActivity.this,
+		// positionReceiver.class));
+		// positionReceiver.setMinTimeMillis((2 * 60 * 1000));
+		// positionReceiver.setExtern(internal);
 
 		// Creates a fake location in the DB;
 		// new dbSchrijf("project78", "sommelsdijk", true).execute(
@@ -102,11 +102,12 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		Initialize();
 		createHomeOverlay();
 
-		/*
-		 * myLocationOverlay.runOnFirstFix(new Runnable() { public void run() {
-		 * mapView.getController().animateTo(
-		 * myLocationOverlay.getMyLocation()); } });
-		 */
+		myLocationOverlay.runOnFirstFix(new Runnable() {
+			public void run() {
+				mapView.getController().animateTo(
+						myLocationOverlay.getMyLocation());
+			}
+		});
 
 		mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mlocListener = new MyLocationListener();
@@ -308,7 +309,35 @@ public class PatientLocationTrackerActivity extends MapActivity {
 			break;
 
 		case R.id.getLocBejaarde: {
-			getLocBejaarde("bla");
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+			alert.setTitle("Title");
+			alert.setMessage("Message");
+
+			// Set an EditText view to get user input
+			final EditText input = new EditText(this);
+			alert.setView(input);
+
+			alert.setPositiveButton("Ok",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							String value = input.getText().toString();
+							getLocBejaarde(value);
+						}
+					});
+
+			alert.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							// Canceled.
+						}
+					});
+
+			alert.show();
+			// see
+			// http://androidsnippets.com/prompt-user-input-with-an-alertdialog
 		}
 
 		case R.id.ManualTrustedLoc:
@@ -325,16 +354,8 @@ public class PatientLocationTrackerActivity extends MapActivity {
 	}
 
 	private void getLocBejaarde(String naam) {
-		try {
-			String tmp = new TcpClient().execute(naam).get();
-			Log.i("loc", tmp);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		TcpClient client = new TcpClient(this);
+		client.execute(naam);
 	}
 
 	private void getHomeLocation() {
@@ -465,7 +486,7 @@ public class PatientLocationTrackerActivity extends MapActivity {
 		mlocManager.removeUpdates(mlocListener);
 	}
 
-	private void createMarker(GeoPoint gp) {
+	public void createMarker(GeoPoint gp) {
 		OverlayItem overlayitem = new OverlayItem(gp, "", "");
 		itemizedoverlay.addOverlay(overlayitem);
 
