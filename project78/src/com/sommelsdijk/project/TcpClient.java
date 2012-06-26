@@ -52,7 +52,7 @@ public class TcpClient extends AsyncTask<String, String, String> {
 				GeoPoint gp = new GeoPoint(Integer.parseInt(split[0]),
 						Integer.parseInt(split[1]));
 
-				pat.createMarker(gp);
+				pat.currentPatientLocation(gp);
 				pat.mapController.animateTo(gp);
 
 				s.close();

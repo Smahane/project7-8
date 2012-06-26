@@ -492,8 +492,22 @@ public class PatientLocationTrackerActivity extends MapActivity {
 
 		if (itemizedoverlay.size() > 0) {
 			mapView.getOverlays().add(itemizedoverlay);
+		
 		}
 	}
+	
+	public void currentPatientLocation(GeoPoint gp) {
+		OverlayItem overlayitem = new OverlayItem(gp, "", "");
+		Drawable drawable = this.getResources().getDrawable(R.drawable.pltoma);
+		MyOverlays patientLoc = new MyOverlays(this, drawable, internal);
+		patientLoc.addOverlay(overlayitem);
+
+		if (patientLoc.size() > 0) {
+			mapView.getOverlays().add(patientLoc);
+		
+		}
+	}
+
 
 	protected static void createTrustedLocation() {
 		OverlayItem overlayitem = new OverlayItem(
